@@ -6,12 +6,17 @@ package Socket;
 
 //import java.net.Socket;
 
+import Cipher.CeaserCipher;
+import Cipher.RSACipher;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.math.BigInteger;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //import org.jsoup.Connection;
 //import org.jsoup.Jsoup;
@@ -32,7 +37,7 @@ public class socketManager {
 //            IPConfig ipConfig = new IPConfig();
 //            String ipServer = ipConfig.getIPServer();
             // Khởi tạo kết nối TCP socket
-            commandSocket = new Socket("localhost", 21);
+            commandSocket = new Socket("localhost", 1234);
             // Khởi tạo BufferedReader và BufferedWriter để gửi và nhận dữ liệu
             commandReader = new BufferedReader(new InputStreamReader(commandSocket.getInputStream()));
             commandWriter = new BufferedWriter(new OutputStreamWriter(commandSocket.getOutputStream()));    
@@ -53,7 +58,12 @@ public class socketManager {
         String serverKey = commandReader.readLine();
         return key;
     }
-    
+    public String register(String username,String password,String key) throws Exception{
+        String access ="register " +username + " "+password+" "+key;
+        writeLineAndFlush(access, commandWriter);
+        String serverKey = commandReader.readLine();
+        return serverKey    ;
+    }
     public void disconnect() throws IOException{
         commandReader.close();
         commandWriter.close();
@@ -61,9 +71,18 @@ public class socketManager {
         instance=null;
     }
     public void writeLineAndFlush(String content, BufferedWriter writer) throws Exception {
-                
+        content = RSACipher.encrypt(content, RSACipher.server_key_e, RSACipher.server_key_n);
         writer.append(content);
         writer.newLine();
         writer.flush();
+    }
+    public static void main(String[] args) {
+        try {
+            int key = CeaserCipher.generateRandomKey();
+            String res = socketManager.getInstance().register("2", "2", key+"");
+            System.out.println(CeaserCipher.decrypt(res, key));
+        } catch (Exception ex) {
+            Logger.getLogger(socketManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

@@ -34,20 +34,25 @@ public class CeaserCipher {
 
         return encryptedText.toString();
     }
-    private String encrypt(String text, int specificKey) {
-        StringBuilder result = new StringBuilder();
-        for (char c : text.toCharArray()) {
-            if (Character.isLetter(c)) {
-                char base = Character.isUpperCase(c) ? 'A' : 'a';
-                result.append((char) ((c - base + specificKey + 26) % 26 + base));
-            } else {
-                result.append(c);
-            }
+    public static String encrypt(String text, int specificKey) {
+    StringBuilder result = new StringBuilder();
+    for (char c : text.toCharArray()) {
+        if (Character.isLetter(c)) {
+            char base = Character.isUpperCase(c) ? 'A' : 'a';
+            result.append((char) ((c - base + specificKey + 26) % 26 + base));
+        } else {
+            // Giữ nguyên khoảng trắng
+            result.append(c);
         }
-
-        return result.toString();
     }
+
+    return result.toString();
+}
     public String decrypt(String ciphertext) {
+        // Đối với mã Caesar, giải mã giống nhau với mã hóa với khóa âm
+        return encrypt(ciphertext, -key);
+    }
+    public static String decrypt(String ciphertext, int key) {
         // Đối với mã Caesar, giải mã giống nhau với mã hóa với khóa âm
         return encrypt(ciphertext, -key);
     }
