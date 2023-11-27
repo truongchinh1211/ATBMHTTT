@@ -167,11 +167,12 @@ public class Bill_DAO extends connectDB{
         }catch(SQLException e){Logger.getLogger(connectDB.class.getName()).log(Level.SEVERE, null, e);}
         return arr;
     }
-    public ArrayList<statisticalObject> countCustomerByMonth(String month){    
+    public ArrayList<statisticalObject> countCustomerByMonth(String month,String year){    
             ArrayList<statisticalObject> soL= new ArrayList<>();
             String sql = "SELECT bill.Customer_id,COUNT(bill.Customer_id) AS amount FROM bill,customer "
                           +  "WHERE customer.Customer_id=bill.Customer_id\n" +
                              "AND MONTH(Date)='"+month+"' " +
+                             "AND YEAR(Date)='"+year+"'"+
                              "GROUP BY Customer_id";
             try(Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
                 while(rs.next()){

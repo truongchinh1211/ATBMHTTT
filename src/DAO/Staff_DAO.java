@@ -47,7 +47,52 @@ public class Staff_DAO {
         }
         return staffList;
     }
-    
+        public Staff readByName(String name) {
+        String sql = "SELECT * FROM `staff` WHERE `Full_Name`=?";
+        try (Connection conn = cd.getConnect(); PreparedStatement pstm = conn.prepareStatement(sql);){
+            pstm.setString(1, name);
+            ResultSet rs = pstm.executeQuery();
+            if(rs.next()) {
+                Staff sf = new Staff();
+                sf.setStaffId(rs.getString(1));
+                sf.setStaffName(rs.getString(2));
+                sf.setStaffBirthYear(rs.getInt(3));
+                sf.setGender(rs.getString(4));
+                sf.setAddress(rs.getString(5));
+                sf.setPhoneNum(rs.getString(6));
+                sf.setBaseSalary(rs.getInt(7));
+                return sf;
+            }
+        } 
+        catch (SQLException ex) {
+            Logger.getLogger(Decentralization_DAO.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        return null;
+    }
+    public Staff readById(String id) {
+        String sql = "SELECT * FROM `staff` WHERE `Staff_id`=?";
+        try (Connection conn = cd.getConnect(); PreparedStatement pstm = conn.prepareStatement(sql);){
+            pstm.setString(1, id);
+            ResultSet rs = pstm.executeQuery();
+            if(rs.next()) {
+                Staff sf = new Staff();
+                sf.setStaffId(rs.getString(1));
+                sf.setStaffName(rs.getString(2));
+                sf.setStaffBirthYear(rs.getInt(3));
+                sf.setGender(rs.getString(4));
+                sf.setAddress(rs.getString(5));
+                sf.setPhoneNum(rs.getString(6));
+                sf.setBaseSalary(rs.getInt(7));
+                return sf;
+            }
+        } 
+        catch (SQLException ex) {
+            Logger.getLogger(Decentralization_DAO.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        return null;
+    }
      /*public ArrayList<String> readStaffID(){
         ArrayList<String> staffIdList = new ArrayList<String>();
         String sql = "SELECT `Staff_id` FROM `staff` WHERE `Staff_id` <> 'AA00'";

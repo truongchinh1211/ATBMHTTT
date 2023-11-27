@@ -102,11 +102,12 @@ public class BillDetail_DAO {
         }catch(SQLException e){Logger.getLogger(connectDB.class.getName()).log(Level.SEVERE, null, e);}
         return n;
     }
-    public ArrayList<statisticalObject> CountSoldProductByMonth(String month){
+    public ArrayList<statisticalObject> CountSoldProductByMonth(String month,String year){
         ArrayList<statisticalObject> soL = new ArrayList<>();
         String sql="SELECT Product_id,Size, SUM(Quantity) AS amount FROM bill_detail,bill \n" +
                     "WHERE bill.Bill_ID = bill_detail.Bill_id\n" +
                     "AND MONTH(bill.Date) = '"+month+"' \n" +
+                    "AND YEAR(bill.Date) = '"+year+"' \n" +
                     "GROUP BY Product_id,Size";
         try(Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
             while(rs.next()){

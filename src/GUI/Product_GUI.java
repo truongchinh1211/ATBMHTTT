@@ -17,11 +17,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 public class Product_GUI extends javax.swing.JPanel implements checkPermission{
-
+    Category_BUS categoryBus = new Category_BUS();
     Product_BUS productBUS = new Product_BUS();
     ArrayList<Product_DTO> listProduct;
     private DecentralizationDetail_BUS dcdtBUS = new DecentralizationDetail_BUS();
-    String chosenImg = "/Img/chicken-leg.png";
+    String chosenImg = "";
     private int permissionType;
     String dcdt = "";
 
@@ -248,6 +248,11 @@ public class Product_GUI extends javax.swing.JPanel implements checkPermission{
         btnUpdate.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnUpdateMouseClicked(evt);
+            }
+        });
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
             }
         });
 
@@ -575,14 +580,8 @@ public class Product_GUI extends javax.swing.JPanel implements checkPermission{
         int i = tblProductList1.getSelectedRow();
         String selectedID = (String) tblProductList1.getValueAt(i, 0);
         String selectedSize = (String) tblProductList1.getValueAt(i, 1);
-        Product_DTO selectedProduct = listProduct.get(i);
+        Product_DTO selectedProduct = productBUS.readById(selectedID, selectedSize);
         
-        for (Product_DTO pd : listProduct) {
-            if (pd.getProductID().equalsIgnoreCase(selectedID) && pd.getSize().equalsIgnoreCase(selectedSize)) {
-                selectedProduct = pd;
-            }
-        }
-
         txtProductID1.setText(selectedProduct.getProductID());
         txtProductName1.setText(selectedProduct.getProductName());
         txtSizeID1.setText(selectedProduct.getSize());
@@ -593,7 +592,7 @@ public class Product_GUI extends javax.swing.JPanel implements checkPermission{
         } else {
             rdOff.setSelected(true);
         }
-        cbbCategoryID1.setSelectedItem(selectedProduct.getCategoryID());
+        cbbCategoryID1.setSelectedItem(categoryBus.readById(selectedProduct.getCategoryID()).getCategory_Name());
         
         ImageIcon icon = new ImageIcon(selectedProduct.getImage());
         Image image = icon.getImage();
@@ -685,13 +684,14 @@ public class Product_GUI extends javax.swing.JPanel implements checkPermission{
             } else if (productBUS.productNameExisted(newID, txtProductName1.getText())) {
                 JOptionPane.showMessageDialog(this, "Tên sản phẩm đã tồn tại!");
             } else {
-                chosenImg = chosenImg.replace("\\", "/");
-                Product_DTO product = new Product_DTO(newID, txtSizeID1.getText(), txtProductName1.getText(), cbbCategoryID1.getSelectedItem() + "", Integer.parseInt(txtPrice1.getText()), Integer.parseInt(txtQuantity1.getText()), chosenImg, false, true);
+                chosenImg = "src\\Img\\beef_beefsteak.jpg".replace("\\", "/");
+                Product_DTO product = new Product_DTO(newID, txtSizeID1.getText(), txtProductName1.getText(), categoryBus.readByName(cbbCategoryID1.getSelectedItem().toString()).getCategory_Id() + "", Integer.parseInt(txtPrice1.getText()), Integer.parseInt(txtQuantity1.getText()), chosenImg, false, true);
                 if (productBUS.insertProduct(product)) {
                     JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công");
                     listProduct = productBUS.loadDataProduct();
                     loadProductList(listProduct);
                     refresh();
+                    chosenImg = "";
                 }
             }
         } catch (NumberFormatException e) {
@@ -710,14 +710,18 @@ public class Product_GUI extends javax.swing.JPanel implements checkPermission{
         } else {
             int i = tblProductList1.getSelectedRow();
             Product_DTO selectedProduct = listProduct.get(i);
-            Product_DTO product = new Product_DTO(selectedProduct.getProductID(), txtSizeID1.getText(), txtProductName1.getText(), cbbCategoryID1.getSelectedItem() + "", Double.parseDouble(txtPrice1.getText()), Integer.parseInt(txtQuantity1.getText()), chosenImg, false, selectedBusinessStatus());
+            if(chosenImg!=null)
             chosenImg = chosenImg.replace("\\", "/");
+            else
+                chosenImg = selectedProduct.getImage();
+            Product_DTO product = new Product_DTO(selectedProduct.getProductID(), txtSizeID1.getText(), txtProductName1.getText(), categoryBus.readByName(cbbCategoryID1.getSelectedItem().toString()).getCategory_Id() + "", Double.parseDouble(txtPrice1.getText()), Integer.parseInt(txtQuantity1.getText()), chosenImg, false, selectedBusinessStatus());
             if (productBUS.updateProduct(product,selectedProduct.getSize())) {
                 productBUS.update_Status_Of_All_Product(product);
                 JOptionPane.showMessageDialog(this, "Cập nhật thông tin sản phẩm thành công!");
                 listProduct = productBUS.loadDataProduct();
                 loadProductList(listProduct);
                 refresh();
+                chosenImg = "";
             }
         }
     }//GEN-LAST:event_btnUpdateMouseClicked
@@ -759,13 +763,17 @@ public class Product_GUI extends javax.swing.JPanel implements checkPermission{
         refresh();
     }//GEN-LAST:event_btnRefreshMouseClicked
 
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
     private void loadCategoryComboboxModel() {
-        Category_BUS categoryBUS = new Category_BUS();
-        ArrayList<Category_DTO> tempList = categoryBUS.load_Data_Category();
+
+        ArrayList<Category_DTO> tempList = categoryBus.load_Data_Category();
 
         cbbCategoryID1.removeAllItems();
         for (Category_DTO cate : tempList) {
-            cbbCategoryID1.addItem(cate.getCategory_Id());
+            cbbCategoryID1.addItem(cate.getCategory_Name());
             cbbCategoryID1.setToolTipText(cbbCategoryID1.getToolTipText() + cate.getCategory_Id() + "=" + cate.getCategory_Name() + " | ");
         }
     }

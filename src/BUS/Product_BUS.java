@@ -19,6 +19,9 @@ public class Product_BUS {
     public ArrayList<Product_DTO> loadDataProduct() {
         return productDAO.loadDataProduct();
     }
+    public Product_DTO readById(String id,String size) {
+        return productDAO.readById(id, size);
+    }
 
     // code của Thái
     public ArrayList<Product_DTO> readProductOnBusiness() {

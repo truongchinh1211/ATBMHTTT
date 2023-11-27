@@ -18,7 +18,9 @@ public class Account_BUS {
     public ArrayList<Account> loadDataAccount() {
         return accountDAO.loadDataAccount();
     }
-    
+    public Account readById(String id){
+        return accountDAO.readById(id);
+    }
     public boolean inserAccount(Account account) {
         if(accountDAO.insertAccount(account)) return true;
         return false;

@@ -4,6 +4,7 @@
  */
 package DAO;
 
+import DTO.Account;
 import DTO.Product_DTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,6 +36,20 @@ public class Product_DAO {
             System.out.println(e);
         }
         return listProduct;
+    }
+    public Product_DTO readById(String id,String size) {
+        String sql = "SELECT * FROM product WHERE Product_ID='"+id+"' AND Size='"+size+"'";
+        try (Connection conn = cB.getConnect(); Statement stm = conn.createStatement(); ResultSet rs = stm.executeQuery(sql);) {
+            if (rs.next()) {
+                Product_DTO pd = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"), rs.getInt("Quantity"), rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
+                return pd;
+            }
+        } catch (Exception e) {
+            System.out.println("Error occured at loadDataAccount method from Account_DAO class.");
+            System.out.println(e);
+            return null;
+        }
+        return null;
     }
 
     // code của Thái

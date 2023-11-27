@@ -33,6 +33,34 @@ public class Category_DAO{
         }
         return list_Category;
     }
+        public Category_DTO readById(String id) {
+        String sql = "SELECT * FROM category WHERE Category_ID='"+id+"'";
+        try (Connection conn = cB.getConnect(); Statement stm = conn.createStatement(); ResultSet rs = stm.executeQuery(sql);) {
+            if (rs.next()) {
+                Category_DTO category = new Category_DTO(rs.getString("Category_ID"), rs.getString("Category_Name"), rs.getString("Business_Status"));
+                return category;
+            }
+        } catch (Exception e) {
+            System.out.println("Error occured at loadDataAccount method from Account_DAO class.");
+            System.out.println(e);
+            return null;
+        }
+        return null;
+    }
+        public Category_DTO readByName(String name) {
+        String sql = "SELECT * FROM category WHERE Category_Name='"+name+"'";
+        try (Connection conn = cB.getConnect(); Statement stm = conn.createStatement(); ResultSet rs = stm.executeQuery(sql);) {
+            if (rs.next()) {
+                Category_DTO category = new Category_DTO(rs.getString("Category_ID"), rs.getString("Category_Name"), rs.getString("Business_Status"));
+                return category;
+            }
+        } catch (Exception e) {
+            System.out.println("Error occured at loadDataAccount method from Account_DAO class.");
+            System.out.println(e);
+            return null;
+        }
+        return null;
+    }
     
     //code của Thái
     public ArrayList<Category_DTO> load_Data_CategoryOnBusiness(){

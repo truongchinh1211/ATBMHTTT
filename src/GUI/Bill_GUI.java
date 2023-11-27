@@ -12,6 +12,7 @@ import BUS.Discount_BUS;
 import BUS.Product_BUS;
 import BUS.ReceivedNoteDetail_BUS;
 import BUS.ReceivedNote_BUS;
+import BUS.Staff_BUS;
 import Custom.Detail_BillWithoutX;
 import DTO.Bill;
 import DTO.BillDetail;
@@ -65,6 +66,7 @@ public class Bill_GUI extends javax.swing.JPanel {
      * Creates new form Bill_GUI
      */
     private DefaultTableModel model;
+    private Staff_BUS staff_BUS;
     private ReceivedNote_BUS rnBUS;
     private ReceivedNoteDetail_BUS rndBUS;
     private Bill_BUS bBUS;
@@ -78,6 +80,7 @@ public class Bill_GUI extends javax.swing.JPanel {
     
     public Bill_GUI() {
         initComponents();
+        staff_BUS = new Staff_BUS();
         rnBUS = new ReceivedNote_BUS();
         pBUS= new Product_BUS();
         rndBUS = new ReceivedNoteDetail_BUS();
@@ -495,7 +498,7 @@ public class Bill_GUI extends javax.swing.JPanel {
             idOutput.setText(rn.getReceivedNoteID());
             timeOutput.setText(rn.getDate());
             P_COutput.setText(rn.getSupplier());
-            staffOutput.setText(rn.getStaffId());
+            staffOutput.setText(staff_BUS.getNameById(rn.getStaffId()));
             value1.setText(format.format(rn.getTotalValue()));
             value2.setText(format.format(rn.getTaxValue()));
             value3.setText(format.format(rn.getFinalValue()));
@@ -506,7 +509,7 @@ public class Bill_GUI extends javax.swing.JPanel {
             idOutput.setText(b.getBill_ID());
             timeOutput.setText(b.getDate());
             P_COutput.setText(cBUS.GetNameById(b.getCustomerID()));
-            staffOutput.setText(b.getStaffID());
+            staffOutput.setText(staff_BUS.getNameById(b.getStaffID()));
             value1.setText(format.format(b.getTotalValue()));
             value2.setText(format.format(b.getReceivedMoney()));
             value3.setText(format.format(b.getExcessMoney()));
@@ -622,7 +625,7 @@ public class Bill_GUI extends javax.swing.JPanel {
             for (Bill bL1 : bL) {
                 String id=bL1.getBill_ID();
                 String date= bL1.getDate();
-                String staffName = bL1.getStaffID();
+                String staffName =staff_BUS.getNameById(bL1.getStaffID()) ;
                 Object[] row = new Object[]{id,date,staffName};
                 model.addRow(row);
             }
@@ -631,7 +634,7 @@ public class Bill_GUI extends javax.swing.JPanel {
             for (ReceivedNote rnL1 : rnL) {
                 String id=rnL1.getReceivedNoteID();
                 String date= rnL1.getDate();
-                String staffName = rnL1.getStaffId();
+                String staffName = staff_BUS.getNameById(rnL1.getStaffId());
                 Object[] row = new Object[]{id,date,staffName};
                 model.addRow(row);
             }

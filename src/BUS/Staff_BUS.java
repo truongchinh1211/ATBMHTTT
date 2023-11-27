@@ -24,6 +24,9 @@ public class Staff_BUS {
     public ArrayList<Staff> readStaffsData() {
         return staffDAO.readStaffs();
     }
+    public Staff readByName(String name) {
+        return staffDAO.readByName(name);
+    }
     
     public Boolean checkPrimaryKey(Staff sf) {
         for(Staff iStaff: staffList) {

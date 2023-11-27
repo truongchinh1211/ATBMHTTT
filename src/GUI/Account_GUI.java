@@ -7,7 +7,10 @@ package GUI;
 import BUS.Account_BUS;
 import BUS.DecentralizationDetail_BUS;
 import BUS.Decentralization_BUS;
+import BUS.Staff_BUS;
 import DTO.Account;
+import DTO.Decentralization;
+import DTO.Staff;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
@@ -21,11 +24,13 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Account_GUI extends javax.swing.JPanel implements checkPermission{
     
-    private ArrayList<String> listDecentralize = new ArrayList<String>();
+    private ArrayList<Decentralization> listDecentralize = new ArrayList<Decentralization>();
+    private ArrayList<Staff> listStaff = new ArrayList<>();
     private Decentralization_BUS dcBUS = new Decentralization_BUS();
     private DecentralizationDetail_BUS dcdtBUS = new DecentralizationDetail_BUS();
     private int permissionType;
     Account_BUS accountBUS = new Account_BUS();
+    private Staff_BUS staffBus = new Staff_BUS();
     ArrayList<Account> listAccount;
     String dcdt = "";
     
@@ -34,13 +39,18 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
         initComponents();
         loadAccountList(listAccount);
         this.permissionType = permissionType;
-        Vector comboBoxItems = new Vector();
-        listDecentralize = dcBUS.readAllId();
-        comboBoxItems.add("Chưa xác định");
-        for(String decentralize_id : listDecentralize){
-            comboBoxItems.add(decentralize_id);
+        Vector decentralizeItems = new Vector();
+        Vector staffItems = new Vector();
+        listDecentralize = dcBUS.read();
+        for(Decentralization item : listDecentralize){
+            decentralizeItems.add(item.getDecentralizeName());
         }
-        cbbDecentralizeId.setModel(new DefaultComboBoxModel(comboBoxItems));
+        listStaff = staffBus.readStaffsData();
+        for(Staff item : listStaff){
+            staffItems.add(item.getStaffName());
+        }
+        cbbDecentralizeId.setModel(new DefaultComboBoxModel(decentralizeItems));
+        cbbStaff.setModel(new DefaultComboBoxModel(staffItems));
         this.dcdt = dcdt_Id;
     }
 
@@ -61,7 +71,6 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
         txtUserName = new javax.swing.JTextField();
         lblPasswordConfig = new javax.swing.JLabel();
         txtPassword = new javax.swing.JTextField();
-        txtStaffID = new javax.swing.JTextField();
         lblStaffIDConfig = new javax.swing.JLabel();
         btnAdd = new Custom.Button();
         btnUpdate = new Custom.Button();
@@ -69,6 +78,7 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
         btnDelete = new Custom.Button();
         lblTypeConfig = new javax.swing.JLabel();
         cbbDecentralizeId = new javax.swing.JComboBox<>();
+        cbbStaff = new javax.swing.JComboBox<>();
         roundPanel2 = new Custom.RoundPanel();
         cbbSearchFilter = new javax.swing.JComboBox<>();
         txtSearch = new javax.swing.JTextField();
@@ -104,10 +114,8 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
 
         txtPassword.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
 
-        txtStaffID.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-
         lblStaffIDConfig.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        lblStaffIDConfig.setText("Mã nhân viên:");
+        lblStaffIDConfig.setText("Tên nhân viên:");
 
         btnAdd.setBackground(new java.awt.Color(240, 240, 240));
         btnAdd.setBorder(null);
@@ -170,7 +178,7 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
         });
 
         lblTypeConfig.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        lblTypeConfig.setText("Mã quyền:");
+        lblTypeConfig.setText("Quyền:");
 
         javax.swing.GroupLayout roundPanel3Layout = new javax.swing.GroupLayout(roundPanel3);
         roundPanel3.setLayout(roundPanel3Layout);
@@ -184,7 +192,7 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
                         .addGroup(roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
                         .addGroup(roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -196,13 +204,13 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
                             .addComponent(lblAccountIDConfig, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lblUserNameConfig, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lblStaffIDConfig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
                         .addGroup(roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtStaffID)
                             .addComponent(txtPassword)
                             .addComponent(txtUserName)
                             .addComponent(txtAccountID, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
-                            .addComponent(cbbDecentralizeId, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(cbbDecentralizeId, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbbStaff, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())))
         );
         roundPanel3Layout.setVerticalGroup(
@@ -224,11 +232,11 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
                 .addGroup(roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTypeConfig)
                     .addComponent(cbbDecentralizeId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
+                .addGap(31, 31, 31)
                 .addGroup(roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblStaffIDConfig)
-                    .addComponent(txtStaffID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbbStaff, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 206, Short.MAX_VALUE)
                 .addGroup(roundPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -265,7 +273,7 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
         });
 
         scrAccountList.setBackground(new java.awt.Color(242, 242, 242));
-        scrAccountList.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Danh sách tài khoản", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 10), new java.awt.Color(102, 102, 102))); // NOI18N
+        scrAccountList.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Danh sách tài khoản", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(102, 102, 102))); // NOI18N
         scrAccountList.setName(""); // NOI18N
         scrAccountList.setPreferredSize(new java.awt.Dimension(470, 423));
 
@@ -408,20 +416,15 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
 
     private void tblAccountListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblAccountListMouseClicked
         int i = tblAccountList.getSelectedRow();
-        Account selectedAccount = null;
-        for(Account acc:listAccount){
-            if(acc.getAccountId().equals(tblAccountList.getModel().getValueAt(i, 0))){
-                selectedAccount = acc;
-                break;
-            }
-        }
+        Account selectedAccount = accountBUS.readById(tblAccountList.getModel().getValueAt(i, 0).toString());;
         if(selectedAccount!=null){
             txtAccountID.setText(selectedAccount.getAccountId());
             txtUserName.setText(selectedAccount.getUsername());
             txtPassword.setText(selectedAccount.getPassword());
-            String decentralizeId = selectedAccount.getDecetralizeId()==null? "Chưa xác định" : selectedAccount.getDecetralizeId();
-            cbbDecentralizeId.setSelectedItem(decentralizeId);
-            txtStaffID.setText(selectedAccount.getStaffId());
+            System.out.println(selectedAccount.getDecetralizeId());
+            String decentralizeName = dcBUS.readById(selectedAccount.getDecetralizeId()).getDecentralizeName();
+            cbbDecentralizeId.setSelectedItem(decentralizeName);
+            cbbStaff.setSelectedItem(staffBus.getNameById(selectedAccount.getStaffId()));
         }
     }//GEN-LAST:event_tblAccountListMouseClicked
 
@@ -444,7 +447,7 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
                 JOptionPane.showMessageDialog(this, "Tên tài khoản đã tồn tại!");
             else {
                 Account acc = new Account(newID, txtUserName.getText(), txtPassword.getText(),
-                        cbbDecentralizeId.getSelectedItem().toString(), txtStaffID.getText(), false);
+                        dcBUS.readByName(cbbDecentralizeId.getSelectedItem().toString()).getDecentralizeID(), staffBus.readByName(cbbStaff.getSelectedItem().toString()).getStaffId(), false);
                 if(accountBUS.inserAccount(acc)) {
                     JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
                     listAccount = accountBUS.loadDataAccount();
@@ -475,7 +478,7 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
                 }
             }
             Account acc = new Account(selectedAccount.getAccountId(),txtUserName.getText(), txtPassword.getText(),
-            cbbDecentralizeId.getSelectedItem().toString(), txtStaffID.getText(), false);
+            dcBUS.readByName(cbbDecentralizeId.getSelectedItem().toString()).getDecentralizeID(), staffBus.readByName(cbbStaff.getSelectedItem().toString()).getStaffId(), false);
             if(accountBUS.updateAccount(acc)) {
                 JOptionPane.showMessageDialog(this, "Cập nhật thông tin tài khoản thành công!");
                 listAccount = accountBUS.loadDataAccount();
@@ -522,16 +525,16 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
         txtAccountID.setText("");
         txtUserName.setText("");
         txtPassword.setText("");
-        txtStaffID.setText("");
         cbbDecentralizeId.setSelectedIndex(0);
+        cbbStaff.setSelectedIndex(0);
         ListSelectionModel model = tblAccountList.getSelectionModel();
         model.removeSelectionInterval(tblAccountList.getRowCount(),0);
     }
     
     private boolean isInputEmpty() {
         return txtUserName.getText().isEmpty()
-                || txtPassword.getText().isEmpty()
-                || txtStaffID.getText().isEmpty();
+                || txtPassword.getText().isEmpty();
+                
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -542,6 +545,7 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
     private Custom.Button btnUpdate;
     private javax.swing.JComboBox<String> cbbDecentralizeId;
     private javax.swing.JComboBox<String> cbbSearchFilter;
+    private javax.swing.JComboBox<String> cbbStaff;
     private javax.swing.JLabel lblAccountIDConfig;
     private javax.swing.JLabel lblPasswordConfig;
     private javax.swing.JLabel lblStaffIDConfig;
@@ -555,7 +559,6 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
     private javax.swing.JTextField txtAccountID;
     private javax.swing.JTextField txtPassword;
     private javax.swing.JTextField txtSearch;
-    private javax.swing.JTextField txtStaffID;
     private javax.swing.JTextField txtUserName;
     // End of variables declaration//GEN-END:variables
 }

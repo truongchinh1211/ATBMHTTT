@@ -8,7 +8,36 @@
             <file>file:/C:/java/Fast_Food_Store_Management/src/GUI/Discount_GUI.java</file>
         </group>
         <group>
-            <file>file:/C:/Users/Bum/Documents/GitHub/ATBMHTTT/src/Socket/IPConfig.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/BUS/Decentralization_BUS.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/Product_GUI.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/DAO/Category_DAO.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/DAO/Decentralization_DAO.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/Recieved_GUI.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/Bill_GUI.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/RevenueChart.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/DAO/Bill_DAO.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/Login_GUI.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/Sale_GUI.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/BUS/ReceivedNoteDetail_BUS.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/DAO/Product_DAO.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/PieChart.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/DAO/ReceivedNoteDetail_DAO.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/DAO/Staff_DAO.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/BUS/Product_BUS.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/BUS/Customer_BUS.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/DAO/Account_DAO.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/BUS/Category_BUS.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/BUS/Account_BUS.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/BUS/BillDetail_BUS.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/DAO/BillDetail_DAO.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/BUS/Staff_BUS.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/Statistic_GUI.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/DAO/connectDB.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/NewJFrame1.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/ProductDetails_GUI.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/BUS/Bill_BUS.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/AddCustomerOnSale_GUI.java</file>
+            <file>file:/C:/Users/Son/Documents/GitHub/ATBMHTTT/src/GUI/Staff_GUI.java</file>
         </group>
     </open-files>
 </project-private>

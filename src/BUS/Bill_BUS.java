@@ -50,7 +50,7 @@ public class Bill_BUS {
         arr=b_DAO.SumEarnedValuePerMonth(arr, year);
         return arr;
     }
-    public ArrayList<statisticalObject> countCustomerByMonth(String month){
-        return b_DAO.countCustomerByMonth(month);
+    public ArrayList<statisticalObject> countCustomerByMonth(String month,String year){
+        return b_DAO.countCustomerByMonth(month,year);
     }
 }

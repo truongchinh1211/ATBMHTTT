@@ -135,7 +135,7 @@ public class Statistic_GUI extends javax.swing.JPanel {
         yearText.setText(String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
         monthText.setText(String.valueOf(Calendar.getInstance().get(Calendar.MONTH)+1));
         LineChart(String.valueOf(calendar.getCalendar().get(Calendar.YEAR)));
-        pieChart(String.valueOf(calendar.getCalendar().get(Calendar.MONTH)+1));
+        pieChart(String.valueOf(calendar.getCalendar().get(Calendar.MONTH)+1),String.valueOf(calendar.getCalendar().get(Calendar.YEAR)) );
     }   
     public void LineChart(String year){
         double[] Earned = bBUS.SumEarnedValuePerMonth(year);
@@ -148,14 +148,12 @@ public class Statistic_GUI extends javax.swing.JPanel {
         roundPanel13.add(myChart1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 931, 370));
     }
     
+
     
-    
-    
-    
-   public void pieChart(String month) {
-       ArrayList<statisticalObject> cL = bBUS.countCustomerByMonth(month);
-       ArrayList<statisticalObject> spL = bdBUS.CountSoldProductByMonth(month);
-       ArrayList<statisticalObject> rpL = rndBUS.CountReceivedProductByMonth(month);
+   public void pieChart(String month,String year) {
+       ArrayList<statisticalObject> cL = bBUS.countCustomerByMonth(month,year);
+       ArrayList<statisticalObject> spL = bdBUS.CountSoldProductByMonth(month,year);
+       ArrayList<statisticalObject> rpL = rndBUS.CountReceivedProductByMonth(month,year);
        if(cL.isEmpty()) WarningC.setVisible(true);else WarningC.setVisible(false);
        if(spL.isEmpty()) WarningS.setVisible(true);else WarningS.setVisible(false);
        if(rpL.isEmpty()) WarningR.setVisible(true);else WarningR.setVisible(false);
@@ -168,6 +166,8 @@ public class Statistic_GUI extends javax.swing.JPanel {
        customerChart.setTitle("Khách hàng");
        soldProductChart.setTitle("Sản phẩm bán");
        receivedProductChart.setTitle("Sản phẩm nhập");
+       this.revalidate();
+       this.repaint();
    }
    
    
@@ -1293,7 +1293,9 @@ public class Statistic_GUI extends javax.swing.JPanel {
                 roundPanel14.remove(customerChart);
                 roundPanel14.remove(soldProductChart);
                 roundPanel14.remove(receivedProductChart);
-                pieChart(monthText.getText());
+                pieChart(monthText.getText(),yearText.getText());
+                this.revalidate();
+                this.repaint();
             }
         }catch(NumberFormatException e){
             JOptionPane.showMessageDialog(this, "Vui lòng nhập số", "Warning", JOptionPane.WARNING_MESSAGE);

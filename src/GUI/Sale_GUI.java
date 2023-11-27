@@ -481,15 +481,16 @@ public class Sale_GUI extends javax.swing.JPanel implements checkPermission{
                 }
                 else {
                     double totalCash = 0;
-                    double receiveCash = Double.parseDouble(jTextField3.getText());
                     try {
+                        double receiveCash = Double.parseDouble(jTextField3.getText());
                         totalCash = NumberFormat.getCurrencyInstance(locale).parse(jLabel7.getText()).doubleValue();
+                        double excessCash = totalCash - receiveCash;
+                        jLabel9.setText(format.format(excessCash)+"");
                     }
                     catch (ParseException ex) {
-                        Logger.getLogger(Sale_GUI.class.getName()).log(Level.SEVERE, null, ex);
+
                     }
-                    double excessCash = totalCash - receiveCash;
-                    jLabel9.setText(format.format(excessCash)+"");
+
                 }
             }
         });
@@ -732,7 +733,8 @@ public class Sale_GUI extends javax.swing.JPanel implements checkPermission{
             totalCash = NumberFormat.getCurrencyInstance(locale).parse(jLabel7.getText()).doubleValue();
             excessCash = NumberFormat.getCurrencyInstance(locale).parse(jLabel9.getText()).doubleValue();
         } catch (ParseException ex) {
-            Logger.getLogger(Sale_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(Product_Panel, "Vui lòng nhập đúng định dạng");
+            return;
         }
         
         if(list_Detail_Bill.isEmpty()) {} //do nothing

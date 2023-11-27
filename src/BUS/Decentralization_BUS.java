@@ -24,7 +24,12 @@ public class Decentralization_BUS {
     public ArrayList<Decentralization> read(){
         return decentralizeDAO.read();
     }
-    
+    public Decentralization readById(String id){
+        return decentralizeDAO.readById(id);
+    }
+    public Decentralization readByName(String name){
+        return decentralizeDAO.readByName(name);
+    }
     public ArrayList<String> readAllId(){
         return decentralizeDAO.readAllId();
     }

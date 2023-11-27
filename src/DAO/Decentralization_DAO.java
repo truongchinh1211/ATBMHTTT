@@ -42,6 +42,44 @@ public class Decentralization_DAO {
         }
         return decentralize_list;
     }
+    public Decentralization readById(String id) {
+
+        String sql = "SELECT * FROM `decentralization` WHERE `decentralize_id`=?";
+        try (Connection conn = cn.getConnect(); PreparedStatement pstm = conn.prepareStatement(sql);){
+            pstm.setString(1, id);
+            ResultSet rs = pstm.executeQuery();
+            if(rs.next()) {
+                Decentralization dc = new Decentralization();
+                dc.setDecentralizeID(rs.getString(1));
+                dc.setDecentralizeName(rs.getNString(2));
+                return dc;
+            }
+        } 
+        catch (SQLException ex) {
+            Logger.getLogger(Decentralization_DAO.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        return null;
+    }    
+    
+    public Decentralization readByName(String name) {
+        String sql = "SELECT * FROM `decentralization` WHERE `decentralize_name`=?";
+        try (Connection conn = cn.getConnect(); PreparedStatement pstm = conn.prepareStatement(sql);){
+            pstm.setString(1, name);
+            ResultSet rs = pstm.executeQuery();
+            if(rs.next()) {
+                Decentralization dc = new Decentralization();
+                dc.setDecentralizeID(rs.getString(1));
+                dc.setDecentralizeName(rs.getNString(2));
+                return dc;
+            }
+        } 
+        catch (SQLException ex) {
+            Logger.getLogger(Decentralization_DAO.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        return null;
+    }
     
     public ArrayList<String> readAllId() {
         ArrayList<String> idList = new ArrayList<String>();

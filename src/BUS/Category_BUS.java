@@ -15,7 +15,12 @@ public class Category_BUS {
     public ArrayList<Category_DTO> load_Data_Category(){
         return category_DAO.load_Data_Category();
     }
-    
+    public Category_DTO readById(String id){
+        return category_DAO.readById(id);
+    }
+    public Category_DTO readByName(String name){
+        return category_DAO.readByName(name);
+    }
     //code của Thái
     public ArrayList<Category_DTO> load_Data_CategoryObBusiness(){
         return category_DAO.load_Data_CategoryOnBusiness();

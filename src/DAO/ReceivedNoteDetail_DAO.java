@@ -115,11 +115,12 @@ public class ReceivedNoteDetail_DAO {
         }
         return true;
     }
-    public ArrayList<statisticalObject> CountReceivedProductByMonth(String month){
+    public ArrayList<statisticalObject> CountReceivedProductByMonth(String month,String year){
         ArrayList<statisticalObject> soL = new ArrayList<>();
         String sql="SELECT Product_id,Size, SUM(Quantity) AS amount FROM received_note,received_note_detail\n" +
                     "WHERE received_note.Received_Note_ID = received_note_detail.Received_Note_ID\n" +
                     "AND MONTH(received_note.Date) = '"+month+"' \n" +
+                    "AND YEAR(received_note.Date) = '"+year+"' \n" +
                     "GROUP BY Product_id,Size";
         try(Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
             while(rs.next()){

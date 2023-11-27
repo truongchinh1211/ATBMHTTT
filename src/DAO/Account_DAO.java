@@ -30,6 +30,20 @@ public class Account_DAO extends connectDB {
         }
         return listAccount;
     }
+        public Account readById(String id) {
+        String sql = "SELECT * FROM account WHERE Account_ID='"+id+"'";
+        try (Connection conn = cB.getConnect(); Statement stm = conn.createStatement(); ResultSet rs = stm.executeQuery(sql);) {
+            if (rs.next()) {
+                Account account = new Account(rs.getString("Account_ID"), rs.getString("UserName"), rs.getString("Password"), rs.getString("decentralize_id"), rs.getString("Staff_ID"), rs.getBoolean("IsDeleted"));
+                return account;
+            }
+        } catch (Exception e) {
+            System.out.println("Error occured at loadDataAccount method from Account_DAO class.");
+            System.out.println(e);
+            return null;
+        }
+        return null;
+    }
 
     public boolean insertAccount(Account acc) {
         String sql = "INSERT INTO account (Account_ID, UserName, Password, decentralize_id, Staff_ID, IsDeleted) VALUES (?,?,?,?,?,?)";
