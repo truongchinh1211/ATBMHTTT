@@ -4,6 +4,7 @@ import BUS.DecentralizationDetail_BUS;
 import BUS.Product_BUS;
 import BUS.ReceivedNoteDetail_BUS;
 import BUS.ReceivedNote_BUS;
+import DTO.Product_DTO;
 import DTO.ReceivedNote;
 import DTO.ReceivedNoteDetail;
 import DTO.ReceivedProduct_DTO;
@@ -12,6 +13,8 @@ import java.io.FileInputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -583,7 +586,13 @@ public class Recieved_GUI extends javax.swing.JPanel implements checkPermission 
                     JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi trong quá trình thêm!");
                     break;
                 } else {
-                    productBUS.incQuantity(rp.getProductID(), rp.getSize(), quantityList.get(counter));
+                    Product_DTO product = productBUS.readById(rp.getProductID(), rp.getSize());
+                    int quantity = product.getQuantity()+1;
+                    try {
+                        productBUS.updateProductQuantity(product, quantity);
+                    } catch (Exception ex) {
+                        Logger.getLogger(Recieved_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 counter++;
             }

@@ -2,6 +2,7 @@
 package GUI;
 
 import BUS.Login_BUS;
+import Cipher.AESCipher;
 import DTO.Account;
 import DTO.DecentralizationDetail;
 import java.awt.Color;
@@ -130,6 +131,11 @@ public class Login_GUI extends javax.swing.JFrame {
         button3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 button3MouseClicked(evt);
+            }
+        });
+        button3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button3ActionPerformed(evt);
             }
         });
 
@@ -287,6 +293,7 @@ public class Login_GUI extends javax.swing.JFrame {
                     dcdt = loginBUS.getDecentralizationDetail(staffInfo.get(3));
                 this.dispose();
                 try {
+                    AESCipher.getInstance("");
                     new Home_GUI(staffInfo, dcdt);
                 } catch (ParseException ex) {
                     Logger.getLogger(Login_GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -294,6 +301,10 @@ public class Login_GUI extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_button3MouseClicked
+
+    private void button3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_button3ActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {

@@ -4,6 +4,7 @@
  */
 package DAO;
 
+import Cipher.AESCipher;
 import DTO.Account;
 import DTO.Product_DTO;
 import java.sql.Connection;
@@ -28,7 +29,7 @@ public class Product_DAO {
         String sql = "SELECT * FROM product WHERE IsDeleted <> 1";
         try (Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
             while (rs.next()) {
-                Product_DTO product = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"), rs.getInt("Quantity"), rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
+                Product_DTO product = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"),Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString("Quantity"))) , rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
                 listProduct.add(product);
             }
         } catch (Exception e) {
@@ -41,7 +42,7 @@ public class Product_DAO {
         String sql = "SELECT * FROM product WHERE Product_ID='"+id+"' AND Size='"+size+"'";
         try (Connection conn = cB.getConnect(); Statement stm = conn.createStatement(); ResultSet rs = stm.executeQuery(sql);) {
             if (rs.next()) {
-                Product_DTO pd = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"), rs.getInt("Quantity"), rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
+                Product_DTO pd = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"),Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString("Quantity"))) , rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
                 return pd;
             }
         } catch (Exception e) {
@@ -58,18 +59,18 @@ public class Product_DAO {
         String sql = "SELECT product.* FROM product JOIN category ON product.Category_ID = category.Category_ID WHERE product.BusinessStatus!=0 AND product.IsDeleted!=1 AND category.Business_Status LIKE 'ON' AND category.IsDeleted!=1 GROUP BY Product_ID";
         try (Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
             while (rs.next()) {
-                Product_DTO pd = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"), rs.getInt("Quantity"), rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
+                Product_DTO pd = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"),Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString("Quantity"))) , rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
                 listProduct.add(pd);
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Product_DAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listProduct;
     }
 
-    public boolean insertProduct(Product_DTO product) {
+    public boolean insertProduct(Product_DTO product) throws Exception {
         String sql = "INSERT INTO product (Product_ID, Size, Product_Name, Quantity, UnitPrice, Category_ID, Image, IsDeleted, BusinessStatus)"
-                    + "VALUES ('" + product.getProductID() + "','" + product.getSize() + "','" + product.getProductName() + "'," + product.getQuantity() + "," + product.getPrice() + ",'" + product.getCategoryID() + "','" + product.getImage() + "'," + 0 + "," + 1 + ")";
+                    + "VALUES ('" + product.getProductID() + "','" + product.getSize() + "','" + product.getProductName() + "'," + AESCipher.getInstance().encrypt(product.getQuantity()+"") + "," + product.getPrice() + ",'" + product.getCategoryID() + "','" + product.getImage() + "'," + 0 + "," + 1 + ")";
         try (Connection conn = cB.getConnect();PreparedStatement pst = conn.prepareStatement(sql); ){
             pst.executeUpdate();
         } catch (Exception e) {
@@ -92,8 +93,8 @@ public class Product_DAO {
         return true;
     }
 
-    public boolean updateProduct(Product_DTO product, String size) {
-        String sql = "UPDATE product SET Size = '" + product.getSize() + "', Product_Name = '" + product.getProductName() + "', Quantity = " + product.getQuantity() + ", UnitPrice = " + product.getPrice() + ", Category_ID = '" + product.getCategoryID() + "', Image = '" + product.getImage() + "'" + ",BusinessStatus = " + product.isBusinessStatus()
+    public boolean updateProduct(Product_DTO product, String size) throws Exception {
+        String sql = "UPDATE product SET Size = '" + product.getSize() + "', Product_Name = '" + product.getProductName() + "', Quantity = " +AESCipher.getInstance().encrypt(product.getQuantity()+"")  + ", UnitPrice = " + product.getPrice() + ", Category_ID = '" + product.getCategoryID() + "', Image = '" + product.getImage() + "'" + ",BusinessStatus = " + product.isBusinessStatus()
                     + " WHERE Product_ID = '" + product.getProductID() + "' AND Size = '"+size+"'";
         try (Connection conn = cB.getConnect();PreparedStatement pst = conn.prepareStatement(sql); ){
             pst.executeUpdate();
@@ -118,11 +119,11 @@ public class Product_DAO {
     }
 
     //code của Thái
-    public Boolean updateProductQuantity(Product_DTO product, int quantity) {
+    public Boolean updateProductQuantity(Product_DTO product, int quantity) throws Exception {
         int rowAffected = 0;
         String sql = "UPDATE `product` SET Quantity = ? WHERE Product_ID = ? AND Size = ?";
         try (Connection conn = cB.getConnect();PreparedStatement pstm = conn.prepareStatement(sql);){
-            pstm.setInt(1, quantity);
+            pstm.setString(1, AESCipher.getInstance().encrypt(quantity+""));
             pstm.setString(2, product.getProductID());
             pstm.setString(3, product.getSize());
             rowAffected = pstm.executeUpdate();
@@ -156,8 +157,8 @@ public class Product_DAO {
             String sql = "SELECT * FROM product WHERE " + searchField + " LIKE '%" + keyword + "%' AND IsDeleted = 0";
             try (Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
                 while (rs.next()) {
-                    Product_DTO product = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"), rs.getInt("Quantity"), rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
-                    listProduct.add(product);
+                Product_DTO pd = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"),Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString("Quantity"))) , rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
+                    listProduct.add(pd);
                 }
             } catch (Exception e) {
 
@@ -175,10 +176,10 @@ public class Product_DAO {
         String sql = "SELECT product.* FROM `product` JOIN category ON product.Category_ID = category.Category_ID WHERE category.Category_Name='" + categoryName + "' AND product.IsDeleted!=1 AND product.BusinessStatus!=0 GROUP BY product.Product_ID";
         try (Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
             while (rs.next()) {
-                Product_DTO product = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"), rs.getInt("Quantity"), rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
-                productList.add(product);
+                Product_DTO pd = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"),Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString("Quantity"))) , rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
+                productList.add(pd);
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Product_DAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return productList;
@@ -195,10 +196,10 @@ public class Product_DAO {
         }
         try (Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
             while (rs.next()) {
-                Product_DTO product = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"), rs.getInt("Quantity"), rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
-                productList.add(product);
+                Product_DTO pd = new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"),Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString("Quantity"))) , rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
+                productList.add(pd);
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Product_DAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return productList;
@@ -206,7 +207,7 @@ public class Product_DAO {
 
     //code của Thái
     public ArrayList<String> readSizeByProductID(Product_DTO product) {
-        ArrayList<String> sizes = new ArrayList<String>();
+        ArrayList<String> sizes = new ArrayList<>();
         String sql = "SELECT Size FROM `product` WHERE Product_ID =? AND BusinessStatus !=0 AND IsDeleted !=1";
         try (Connection conn = cB.getConnect();PreparedStatement pstm = conn.prepareStatement(sql); ){
             pstm.setString(1, product.getProductID());
@@ -230,9 +231,10 @@ public class Product_DAO {
             ResultSet rs = pstm.executeQuery();
             if (rs.next()) {
                 priceAndQuantity.add(rs.getString(1));
-                priceAndQuantity.add(rs.getString(2));
+                priceAndQuantity.add(AESCipher.getInstance()
+                        .decrypt(rs.getString(2)));
             }
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Product_DAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return priceAndQuantity;
@@ -271,8 +273,8 @@ public class Product_DAO {
         return isDeleted;
     }
 
-    public boolean restoreProduct(String id, String size, int price, int quantity) {
-        String sql = "UPDATE product SET IsDeleted = 0, UnitPrice = " + price + " , Quantity = " + quantity + " WHERE Product_ID = '" + id + "' AND Size = '" + size + "'";
+    public boolean restoreProduct(String id, String size, int price, int quantity) throws Exception {
+        String sql = "UPDATE product SET IsDeleted = 0, UnitPrice = " + price + " , Quantity = " +AESCipher.getInstance().encrypt(quantity+"")  + " WHERE Product_ID = '" + id + "' AND Size = '" + size + "'";
         try (Connection conn = cB.getConnect();PreparedStatement pst = conn.prepareStatement(sql); ){
             pst.executeUpdate();
         } catch (Exception e) {

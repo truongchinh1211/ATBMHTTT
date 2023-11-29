@@ -34,7 +34,7 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
     ArrayList<Account> listAccount;
     String dcdt = "";
     
-    public Account_GUI(int permissionType, String dcdt_Id) {
+    public Account_GUI(int permissionType, String dcdt_Id) throws Exception {
         listAccount = accountBUS.loadDataAccount();
         initComponents();
         loadAccountList(listAccount);

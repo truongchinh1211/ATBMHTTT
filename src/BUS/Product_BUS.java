@@ -28,7 +28,7 @@ public class Product_BUS {
         return productDAO.readProductOnBusiness();
     }
 
-    public boolean insertProduct(Product_DTO product) {
+    public boolean insertProduct(Product_DTO product) throws Exception {
         if (productDAO.insertProduct(product)) {
             return true;
         }
@@ -42,7 +42,7 @@ public class Product_BUS {
         return false;
     }
 
-    public boolean updateProduct(Product_DTO product, String size) {
+    public boolean updateProduct(Product_DTO product, String size) throws Exception {
         if (productDAO.updateProduct(product,size)) {
             return true;
         }
@@ -65,7 +65,7 @@ public class Product_BUS {
     }
 
     //code cua Thai
-    public boolean updateProductQuantity(Product_DTO product, int quantity) {
+    public boolean updateProductQuantity(Product_DTO product, int quantity) throws Exception {
         return productDAO.updateProductQuantity(product, quantity);
     }
 
@@ -101,7 +101,7 @@ public class Product_BUS {
         return productDAO.productDeletedPreviously(id, size);
     }
 
-    public boolean restoreProduct(String id, String size, int price, int quantity) {
+    public boolean restoreProduct(String id, String size, int price, int quantity) throws Exception {
         return productDAO.restoreProduct(id, size, price, quantity);
     }
 

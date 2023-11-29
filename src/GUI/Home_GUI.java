@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -770,7 +772,11 @@ public class Home_GUI extends javax.swing.JFrame implements checkPermission{
         this.dcdt = decentralization_BUS.get_Decentralize_By_Name(jLabel1.getText());
         if(this.dcdt.getIsAccount()!=0){
             Active(roundPanel12);
-            OpenChildForm(new Account_GUI(this.dcdt.getIsAccount(),this.dcdt_Id));
+            try {
+                OpenChildForm(new Account_GUI(this.dcdt.getIsAccount(),this.dcdt_Id));
+            } catch (Exception ex) {
+                Logger.getLogger(Home_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         else this.hienThiErrorMess();
     }//GEN-LAST:event_roundPanel12MouseClicked
@@ -784,7 +790,11 @@ public class Home_GUI extends javax.swing.JFrame implements checkPermission{
         this.dcdt = decentralization_BUS.get_Decentralize_By_Name(jLabel1.getText());
         if(this.dcdt.getIsBill()!=0){
             Active(roundPanel8);
-            OpenChildForm( new Bill_GUI());
+            try {
+                OpenChildForm( new Bill_GUI());
+            } catch (Exception ex) {
+                Logger.getLogger(Home_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         else this.hienThiErrorMess();
     }//GEN-LAST:event_roundPanel8MouseClicked
@@ -860,7 +870,11 @@ public class Home_GUI extends javax.swing.JFrame implements checkPermission{
         this.dcdt = decentralization_BUS.get_Decentralize_By_Name(jLabel1.getText());
         if(this.dcdt.getIsStaff()!=0){
             Active(roundPanel16);
-            OpenChildForm(new Staff_GUI(this.dcdt.getIsStaff(),this.dcdt_Id));
+            try {
+                OpenChildForm(new Staff_GUI(this.dcdt.getIsStaff(),this.dcdt_Id));
+            } catch (Exception ex) {
+                Logger.getLogger(Home_GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         else this.hienThiErrorMess();
     }//GEN-LAST:event_roundPanel16MouseClicked

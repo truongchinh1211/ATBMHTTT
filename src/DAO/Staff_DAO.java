@@ -4,6 +4,7 @@
  */
 package DAO;
 
+import Cipher.AESCipher;
 import DTO.Staff;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -23,7 +24,7 @@ public class Staff_DAO {
     connectDB cd = new connectDB();
     
     
-    public ArrayList<Staff> readStaffs() {
+    public ArrayList<Staff> readStaffs() throws Exception {
         ArrayList<Staff> staffList = new ArrayList<Staff>();
         String sql = "SELECT * FROM `staff` WHERE `Staff_id` <> 'A00' AND `IsDeleted` <> '1'";
         
@@ -34,9 +35,11 @@ public class Staff_DAO {
                 sf.setStaffName(rs.getString(2));
                 sf.setStaffBirthYear(rs.getInt(3));
                 sf.setGender(rs.getString(4));
-                sf.setAddress(rs.getString(5));
-                sf.setPhoneNum(rs.getString(6));
-                sf.setBaseSalary(rs.getInt(7));
+                sf.setAddress(AESCipher.getInstance().decrypt(rs.getString(5)));
+                String phone = AESCipher.getInstance().decrypt(rs.getString(6));
+                sf.setPhoneNum(phone);
+                int salary = Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString(7)));
+                sf.setBaseSalary(salary);
                 staffList.add(sf);
                 
             }
@@ -47,6 +50,7 @@ public class Staff_DAO {
         }
         return staffList;
     }
+    
         public Staff readByName(String name) {
         String sql = "SELECT * FROM `staff` WHERE `Full_Name`=?";
         try (Connection conn = cd.getConnect(); PreparedStatement pstm = conn.prepareStatement(sql);){
@@ -58,13 +62,15 @@ public class Staff_DAO {
                 sf.setStaffName(rs.getString(2));
                 sf.setStaffBirthYear(rs.getInt(3));
                 sf.setGender(rs.getString(4));
-                sf.setAddress(rs.getString(5));
-                sf.setPhoneNum(rs.getString(6));
-                sf.setBaseSalary(rs.getInt(7));
+                sf.setAddress(AESCipher.getInstance().decrypt(rs.getString(5)));
+                String phone = AESCipher.getInstance().decrypt(rs.getString(6));
+                sf.setPhoneNum(phone);
+                int salary = Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString(7)));
+                sf.setBaseSalary(salary);
                 return sf;
             }
         } 
-        catch (SQLException ex) {
+        catch (Exception ex) {
             Logger.getLogger(Decentralization_DAO.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
@@ -81,13 +87,16 @@ public class Staff_DAO {
                 sf.setStaffName(rs.getString(2));
                 sf.setStaffBirthYear(rs.getInt(3));
                 sf.setGender(rs.getString(4));
-                sf.setAddress(rs.getString(5));
-                sf.setPhoneNum(rs.getString(6));
-                sf.setBaseSalary(rs.getInt(7));
+                sf.setAddress(AESCipher.getInstance().decrypt(rs.getString(5)));
+                System.out.println(sf.getAddress());
+                String phone = AESCipher.getInstance().decrypt(rs.getString(6));
+                sf.setPhoneNum(phone);
+                int salary = Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString(7)));
+                sf.setBaseSalary(salary);
                 return sf;
             }
         } 
-        catch (SQLException ex) {
+        catch (Exception ex) {
             Logger.getLogger(Decentralization_DAO.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
@@ -107,7 +116,8 @@ public class Staff_DAO {
         return staffIdList;
     } */
     
-    public Boolean createStaff(Staff sf){
+    public Boolean createStaff(Staff sf) throws Exception{
+        System.out.println(sf.getAddress());
         int rowStaff = 0;
         String sql = "INSERT INTO `staff` (`Staff_id`, `Full_Name`, `Year_Of_Birth`, `Gender`, `HomeTown`, `Phone_Num`, `Salary`, `IsDeleted`) VALUES (?,?,?,?,?,?,?,?)";
         try (Connection conn = cd.getConnect(); PreparedStatement pstm = conn.prepareStatement(sql);) {
@@ -115,9 +125,9 @@ public class Staff_DAO {
             pstm.setString(2, sf.getStaffName());
             pstm.setInt(3, sf.getStaffBirthYear());
             pstm.setString(4, sf.getGender());
-            pstm.setString(5, sf.getAddress());
-            pstm.setString(6, sf.getPhoneNum());
-            pstm.setInt(7, sf.getBaseSalary());
+            pstm.setString(5, AESCipher.getInstance().encrypt(sf.getAddress()));
+            pstm.setString(6, AESCipher.getInstance().encrypt(sf.getPhoneNum()));
+            pstm.setString(7, AESCipher.getInstance().encrypt(sf.getBaseSalary()+""));
             pstm.setInt(8, 0);
             rowStaff = pstm.executeUpdate();
             
@@ -130,16 +140,16 @@ public class Staff_DAO {
         
     }
     
-    public Boolean updateStaff(Staff sf) {
+    public Boolean updateStaff(Staff sf) throws Exception {
         int rowStaff = 0;
         String sql = "UPDATE `staff` SET `Full_Name` = ?, `Year_Of_Birth` = ?, `Gender` = ?, `HomeTown` = ?, `Phone_Num` = ?, `Salary` = ? WHERE `Staff_id` = ?";
         try (Connection conn = cd.getConnect(); PreparedStatement pstm = conn.prepareStatement(sql);) {
             pstm.setString(1, sf.getStaffName());
             pstm.setInt(2, sf.getStaffBirthYear());
             pstm.setString(3, sf.getGender());
-            pstm.setString(4, sf.getAddress());
-            pstm.setString(5, sf.getPhoneNum());
-            pstm.setInt(6, sf.getBaseSalary());
+            pstm.setString(4, AESCipher.getInstance().encrypt(sf.getAddress()));
+            pstm.setString(5, AESCipher.getInstance().encrypt(sf.getPhoneNum()));
+            pstm.setString(6, AESCipher.getInstance().encrypt(sf.getBaseSalary()+""));
             pstm.setString(7, sf.getStaffId());
             
             rowStaff = pstm.executeUpdate();
@@ -188,8 +198,17 @@ public class Staff_DAO {
             String sql = "SELECT * FROM staff WHERE "+ searchColumn +" LIKE '%"+ wordString +"%'";
             try (Connection conn = cd.getConnect(); Statement stm = conn.createStatement(); ResultSet rs = stm.executeQuery(sql);) {
                 while(rs.next()){
-                    Staff sf = new Staff(rs.getString("Staff_id"), rs.getString("Full_Name"), rs.getInt("Year_Of_Birth"), rs.getString("Gender"), rs.getString("HomTown"),  rs.getString("Phone_Num"), rs.getInt("Salary"), rs.getBoolean("IsDeleted"));
-                    staffList.add(sf);
+                Staff sf = new Staff();
+                sf.setStaffId(rs.getString(1));
+                sf.setStaffName(rs.getString(2));
+                sf.setStaffBirthYear(rs.getInt(3));
+                sf.setGender(rs.getString(4));
+                sf.setAddress(AESCipher.getInstance().decrypt(rs.getString(5)));
+                String phone = AESCipher.getInstance().decrypt(rs.getString(6));
+                sf.setPhoneNum(phone);
+                int salary = Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString(7)));
+                sf.setBaseSalary(salary);
+                staffList.add(sf);
 
                 }
             }
@@ -251,7 +270,8 @@ public class Staff_DAO {
         
     } */
     
-    public boolean phoneExisted(String id, String phone) {
+    public boolean phoneExisted(String id, String phone) throws Exception {
+        phone = AESCipher.getInstance().encrypt(phone);
         boolean isExisted = false;
             String sql = "SELECT * FROM staff WHERE Phone_Num = '" + phone + "' AND Staff_id NOT IN ('" + id + "') AND IsDeleted <> 1";
             

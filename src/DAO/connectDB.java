@@ -27,7 +27,7 @@ public class connectDB {
     
     public Connection getConnect() {
         try {    
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/fast_food_store", "root", "");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/atbmhttt", "root", "");
             return conn;
         } catch (SQLException ex) {
             Logger.getLogger(connectDB.class.getName()).log(Level.SEVERE, null, ex);

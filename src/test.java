@@ -1,4 +1,5 @@
 
+import Cipher.AESCipher;
 import java.nio.charset.Charset;
 
 /*
@@ -11,8 +12,8 @@ import java.nio.charset.Charset;
  * @author Bum
  */
 public class test {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         
-        System.out.println(Charset.defaultCharset());
+        System.out.println(AESCipher.getInstance("").decrypt("CRCwe/XAOiDctGKIi9Wx2A=="));
     }
 }

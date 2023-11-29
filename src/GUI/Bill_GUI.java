@@ -78,7 +78,7 @@ public class Bill_GUI extends javax.swing.JPanel {
     private ArrayList<Bill> bL= new ArrayList<>();
     private Discount_BUS discount_BUS = new Discount_BUS();
     
-    public Bill_GUI() {
+    public Bill_GUI() throws Exception {
         initComponents();
         staff_BUS = new Staff_BUS();
         rnBUS = new ReceivedNote_BUS();

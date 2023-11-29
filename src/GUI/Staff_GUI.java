@@ -12,6 +12,8 @@ import DTO.Staff;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -32,7 +34,7 @@ public class Staff_GUI extends javax.swing.JPanel implements checkPermission {
     /**
      * Creates new form Staff_GUI
      */
-    public Staff_GUI(int permissionType, String dcdt_Id){
+    public Staff_GUI(int permissionType, String dcdt_Id) throws Exception{
         staffList = staffBUS.readStaffsData();
         initComponents();
         loadTable(staffList);
@@ -450,8 +452,9 @@ public class Staff_GUI extends javax.swing.JPanel implements checkPermission {
             JOptionPane.showMessageDialog(this, "Tên nhân viên phải là chữ", "Warning", JOptionPane.WARNING_MESSAGE);
             
             else {
+                    System.out.println(txtAddress.getText());
                     Staff sf = new Staff(idString, txtStaffName.getText(), Integer.parseInt(txtYearOfBirth.getText()), txtGender.getText(), txtAddress.getText(), txtPhone.getText(), Integer.parseInt(txtBaseSalary.getText()), false);
-                
+                    
                     if (staffBUS.addStaffString(sf)) {
                         JOptionPane.showMessageDialog(this, "Thêm nhân viên thành công");
                         staffList = staffBUS.readStaffsData();
@@ -460,7 +463,7 @@ public class Staff_GUI extends javax.swing.JPanel implements checkPermission {
                     }     
             }
         }
-        catch(NumberFormatException e){
+        catch(Exception e){
             
         }
     }//GEN-LAST:event_btnAdd1MouseClicked
@@ -486,10 +489,11 @@ public class Staff_GUI extends javax.swing.JPanel implements checkPermission {
             JOptionPane.showMessageDialog(this, "Tên nhân viên phải là chữ", "Warning", JOptionPane.WARNING_MESSAGE);
             
             else {
+                    System.out.println("Sửa address: "+txtAddress.getText());
                     int rowCount = tblStaffList.getSelectedRow();
                     Staff selectedStaff = staffList.get(rowCount);
                     Staff sf = new Staff(selectedStaff.getStaffId(), txtStaffName.getText(), Integer.parseInt(txtYearOfBirth.getText()), txtGender.getText(), txtAddress.getText(), txtPhone.getText(), Integer.parseInt(txtBaseSalary.getText()), false);
-                
+                    System.out.println("sf sửa: "+ sf.getAddress());
                     if (staffBUS.updateStaffString(sf)) {
                         JOptionPane.showMessageDialog(this, "Sửa nhân viên thành công");
                         staffList = staffBUS.readStaffsData();
@@ -498,7 +502,7 @@ public class Staff_GUI extends javax.swing.JPanel implements checkPermission {
                     }     
             }
         }
-        catch(NumberFormatException e){
+        catch(Exception e){
             
         }
     }//GEN-LAST:event_btnUpdate1MouseClicked
@@ -514,7 +518,11 @@ public class Staff_GUI extends javax.swing.JPanel implements checkPermission {
                 
                 if (staffBUS.deleteStaffString(selectedStaff.getStaffId()) ) {
                     JOptionPane.showMessageDialog(this, "Đã xóa nhân viên");
-                    staffList = staffBUS.readStaffsData();
+                    try {
+                        staffList = staffBUS.readStaffsData();
+                    } catch (Exception ex) {
+                        Logger.getLogger(Staff_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     loadTable(staffList);
                     refreshRow();
                 }
@@ -544,11 +552,13 @@ public class Staff_GUI extends javax.swing.JPanel implements checkPermission {
 
     private void tblStaffListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblStaffListMouseClicked
         int i = tblStaffList.getSelectedRow();
-        Staff selectedStaff = staffList.get(i);
+        String id =(String) tblStaffList.getValueAt(i, 0);
+        Staff selectedStaff = staffBUS.readById(id);
 
         txtStaffID.setText(selectedStaff.getStaffId());
         txtStaffName.setText(selectedStaff.getStaffName());
         txtYearOfBirth.setText(selectedStaff.getStaffBirthYear() + "");
+        System.out.println(selectedStaff.getAddress());
         txtGender.setText(selectedStaff.getGender());
         txtAddress.setText(selectedStaff.getAddress());
         txtPhone.setText(selectedStaff.getPhoneNum());
@@ -607,7 +617,7 @@ public class Staff_GUI extends javax.swing.JPanel implements checkPermission {
             String sfPhone = sf.getPhoneNum();
             int sfSalary = sf.getBaseSalary();
 
-            Object row[] = new Object[]{sfId, sfName, sfYear, sfGender, sfAddress, sfPhone, sfSalary};
+            Object row[] = new Object[]{sfId, sfName, sfYear, sfAddress, sfGender,  sfPhone, sfSalary};
             model.addRow(row);
         }
     }

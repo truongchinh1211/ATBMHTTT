@@ -15,17 +15,20 @@ public class Staff_BUS {
     private ArrayList<Staff> staffList;
     private Staff_DAO staffDAO;
     
-    public Staff_BUS(){
+    public Staff_BUS() throws Exception{
         staffList = new ArrayList<Staff>();
         staffDAO = new Staff_DAO();
         staffList = staffDAO.readStaffs();
     }
     
-    public ArrayList<Staff> readStaffsData() {
+    public ArrayList<Staff> readStaffsData() throws Exception {
         return staffDAO.readStaffs();
     }
     public Staff readByName(String name) {
         return staffDAO.readByName(name);
+    }
+    public Staff readById(String id){
+        return staffDAO.readById(id);
     }
     
     public Boolean checkPrimaryKey(Staff sf) {
@@ -38,7 +41,7 @@ public class Staff_BUS {
         return true;
     }
     
-    public Boolean addStaffString(Staff sf) {
+    public Boolean addStaffString(Staff sf) throws Exception {
         if (checkPrimaryKey(sf)) {
             if (staffDAO.createStaff(sf)) return true;
         }
@@ -46,7 +49,7 @@ public class Staff_BUS {
         
     }
     
-    public Boolean updateStaffString(Staff sf) {
+    public Boolean updateStaffString(Staff sf) throws Exception {
         if (staffDAO.updateStaff(sf)) return true;
         return false;
     }
@@ -71,7 +74,7 @@ public class Staff_BUS {
         return name;
     }
     
-    public Boolean phoneStaffExisted(String id, String phone) {
+    public Boolean phoneStaffExisted(String id, String phone) throws Exception {
         if (staffDAO.phoneExisted(id, phone)) return true;
         return false;
     }

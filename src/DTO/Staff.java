@@ -23,7 +23,7 @@ public class Staff {
     }
 
    
-    public Staff(String staffId, String staffName, int staffBirthYear, String address, String gender, String phoneNum, int baseSalary, boolean isDeleted) {
+    public Staff(String staffId, String staffName, int staffBirthYear, String gender, String address, String phoneNum, int baseSalary, boolean isDeleted) {
         this.staffId = staffId;
         this.staffName = staffName;
         this.staffBirthYear = staffBirthYear;
