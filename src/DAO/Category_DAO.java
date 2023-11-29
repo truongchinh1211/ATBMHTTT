@@ -1,5 +1,6 @@
 package DAO;
 
+import Cipher.AESCipher;
 import DTO.Bill;
 import DTO.BillDetail;
 import DTO.Category_DTO;
@@ -171,16 +172,16 @@ public class Category_DAO{
             if(rs.next()){
                 Bill b = new Bill();
                 b.setBill_ID(rs.getString("Bill_ID"));
-                b.setDate(rs.getString("Date"));
-                b.setTotalValue(rs.getInt("TotalValue"));
-                b.setReceivedMoney(rs.getDouble("ReceivedMoney"));
-                b.setExcessMoney(rs.getDouble("ExcessMoney"));
+                b.setDate(AESCipher.getInstance().decrypt(rs.getString("Date")));
+                b.setTotalValue(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("TotalValue"))));
+                b.setReceivedMoney(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("ReceivedMoney"))));
+                b.setExcessMoney(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("ExcessMoney"))));
                 b.setStaffID(rs.getString("Staff_id"));
                 b.setCustomerID(rs.getString("Customer_id"));
                 return b;
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("Error at  get_Bill_From_Id() method from CategoryDAO class!");
             System.err.println(e);
         }
@@ -222,10 +223,10 @@ public class Category_DAO{
 
         try (Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
             if(rs.next()){
-              return new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"), rs.getInt("Quantity"), rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));  
+                return new Product_DTO(rs.getString("Product_ID"), rs.getString("size"), rs.getString("Product_Name"), rs.getString("Category_ID"), rs.getInt("UnitPrice"),Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString("Quantity"))) , rs.getString("Image"), rs.getBoolean("IsDeleted"), rs.getBoolean("BusinessStatus"));
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("Error at  get_Bill_From_Id() method from CategoryDAO class!");
             System.err.println(e);
         }
@@ -276,22 +277,23 @@ public class Category_DAO{
     public ArrayList<Bill> search_Bill(String start, String end){
              String sql = "";
              if(start.equals(end))
-                sql = "SELECT * FROM bill WHERE DATE(Date) = '"+start+"'";
-             else sql = "SELECT * FROM bill WHERE DATE(Date) >= '"+start+"' AND DATE(Date) <= '"+end+"'";
+                sql = "SELECT * FROM bill WHERE DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) = '"+start+"'";
+             else sql = "SELECT * FROM bill WHERE DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) >= '"+start+"' "
+                     + "AND DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) <= '"+end+"'";
              ArrayList<Bill> bL = new ArrayList<>();
              try(Connection conn = cB.getConnect(); Statement stm = conn.createStatement(); ResultSet rs = stm.executeQuery(sql);){
                  while(rs.next()){
                      Bill b = new Bill();
                         b.setBill_ID(rs.getString("Bill_ID"));
-                        b.setDate(rs.getString("Date"));
-                        b.setTotalValue(rs.getInt("TotalValue"));
-                        b.setReceivedMoney(rs.getDouble("ReceivedMoney"));
-                        b.setExcessMoney(rs.getDouble("ExcessMoney"));
+                        b.setDate(AESCipher.getInstance().decrypt(rs.getString("Date")));
+                        b.setTotalValue(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("TotalValue"))));
+                        b.setReceivedMoney(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("ReceivedMoney"))));
+                        b.setExcessMoney(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("ExcessMoney"))));
                         b.setStaffID(rs.getString("Staff_id"));
                         b.setCustomerID(rs.getString("Customer_id"));
                         bL.add(b);
                  }
-             } catch (SQLException ex) {
+             } catch (Exception ex) {
                 Logger.getLogger(Category_DAO.class.getName()).log(Level.SEVERE, null, ex);
             }
              return bL; 
@@ -300,22 +302,23 @@ public class Category_DAO{
          public ArrayList<ReceivedNote> search_ReceivedNote(String start, String end){
              String sql = "";
              if(start.equals(end))
-                sql = "SELECT * FROM received_note WHERE DATE(Date) = '"+start+"'";
-             else sql = "SELECT * FROM received_note WHERE DATE(Date) >= '"+start+"' AND DATE(Date) <= '"+end+"'";
+                sql = "SELECT * FROM received_note WHERE DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) = '"+start+"'";
+             else sql = "SELECT * FROM received_note WHERE DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) >= '"+start+"' "
+                     + "AND DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) <= '"+end+"'";
              ArrayList<ReceivedNote> rnList = new ArrayList<>();
              try(Connection conn = cB.getConnect(); Statement stm = conn.createStatement(); ResultSet rs = stm.executeQuery(sql);){
                  while(rs.next()){
                      ReceivedNote rn = new ReceivedNote();
                     rn.setReceivedNoteID(rs.getString("Received_Note_ID"));
-                    rn.setDate(rs.getString("Date"));
-                    rn.setTotalValue(rs.getDouble("Total_Value"));
-                    rn.setTaxValue(rs.getDouble("Tax_Value"));
-                    rn.setFinalValue(rs.getDouble("Final_Value"));
-                    rn.setSupplier(rs.getString("Supplier"));
+                    rn.setDate(AESCipher.getInstance().decrypt(rs.getString("Date")));
+                    rn.setTotalValue(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("Total_Value"))));
+                    rn.setTaxValue(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("Tax_Value"))));
+                    rn.setFinalValue(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("Final_Value"))));
+                    rn.setSupplier(AESCipher.getInstance().decrypt(rs.getString("Supplier")));
                     rn.setStaffId(rs.getString("Staff_ID"));
                     rnList.add(rn);
                  }
-             } catch (SQLException ex) {
+             } catch (Exception ex) {
                 Logger.getLogger(Category_DAO.class.getName()).log(Level.SEVERE, null, ex);
             }
              return rnList; 

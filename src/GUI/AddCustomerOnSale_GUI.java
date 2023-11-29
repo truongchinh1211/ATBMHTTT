@@ -79,7 +79,7 @@ public class AddCustomerOnSale_GUI extends javax.swing.JFrame {
         });
 
         jPanel2.setBackground(new java.awt.Color(51, 51, 51));
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 11), new java.awt.Color(255, 255, 255))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 12), new java.awt.Color(255, 255, 255))); // NOI18N
         jPanel2.setDoubleBuffered(false);
         jPanel2.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
@@ -299,7 +299,7 @@ public class AddCustomerOnSale_GUI extends javax.swing.JFrame {
           || jTextField3.getText().equals("") || jTextField4.getText().equals("")) {
             JOptionPane.showMessageDialog(this, "Vui lòng không để trống dữ liệu!", "Warning", JOptionPane.WARNING_MESSAGE);
         }
-        else if( !(jTextField4.getText().matches("-?\\d+")) || 2022 - Integer.parseInt(jTextField4.getText()) < 18 || 2022 - Integer.parseInt(jTextField4.getText()) > 90) {
+        else if( !(jTextField2.getText().matches("-?\\d+")) || 2022 - Integer.parseInt(jTextField2.getText()) < 18 || 2022 - Integer.parseInt(jTextField2.getText()) > 90) {
             JOptionPane.showMessageDialog(this, "Độ tuổi chấp nhận từ 18 đến 90!", "Warning", JOptionPane.WARNING_MESSAGE);
         }
         else if(!jTextField3.getText().matches("^84|0[3|5|7|8|9]\\d{8}$")) {

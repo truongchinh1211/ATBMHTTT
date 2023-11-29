@@ -47,7 +47,7 @@ public class ReceivedNote_DAO {
     public ArrayList<ReceivedNote> loadDataByDate(String Date) {
         ArrayList<ReceivedNote> rnList = new ArrayList<>();
         String sql = "SELECT * FROM received_note\n"
-                    + "WHERE DATE(AES_DECRYPT(Date,'"+AESCipher.getInstance().getKey()+"'))='" + Date + "'"
+                    + "WHERE DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"'))='" + Date + "'"
                     + "ORDER BY Date DESC ";
         try (Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
             while (rs.next()) {
@@ -128,7 +128,6 @@ public class ReceivedNote_DAO {
     }
     public double[] SumPaidValuePerMonth(double[] arr,String year){
     String sql = "SELECT MONTH(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) as month, SUM(AES_DECRYPT(FROM_BASE64(Final_Value),'"+AESCipher.getInstance().getKey()+"')) as value FROM `received_note` WHERE YEAR(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"'))='"+year+"'";
-        System.out.println(sql);
     try(Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
         while(rs.next()){
             if(rs.getString("month")!=null)

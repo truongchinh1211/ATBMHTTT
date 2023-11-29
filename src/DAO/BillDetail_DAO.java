@@ -4,6 +4,7 @@
  */
 package DAO;
 
+import Cipher.AESCipher;
 import DTO.BillDetail;
 import DTO.statisticalObject;
 import java.sql.Connection;
@@ -31,12 +32,12 @@ public class BillDetail_DAO {
             bd.setBillId(rs.getString("Bill_id"));
             bd.setProductId(rs.getString("Product_id"));
             bd.setSize(rs.getString("Size"));
-            bd.setQuantity(rs.getInt("Quantity"));
-            bd.setTotalValue(rs.getInt("TotalValue"));
-            bd.setPercent(rs.getInt("percent"));
+            bd.setQuantity(Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString("Quantity"))));
+            bd.setTotalValue(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("TotalValue"))));
+            bd.setPercent(Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString("percent"))));
             bdL.add(bd);
             }
-        }catch(SQLException e){Logger.getLogger(connectDB.class.getName()).log(Level.SEVERE, null, e);}
+        }catch(Exception e){Logger.getLogger(connectDB.class.getName()).log(Level.SEVERE, null, e);}
         return bdL;
     }
     
@@ -47,11 +48,11 @@ public class BillDetail_DAO {
             pstm.setString(1, bd.getBillId());
             pstm.setString(2, bd.getProductId());
             pstm.setString(3, bd.getSize());
-            pstm.setInt(4, bd.getQuantity());
-            pstm.setDouble(5, bd.getTotalValue());
-            pstm.setInt(6, bd.getPercent());
+            pstm.setString(4, AESCipher.getInstance().encrypt(String.valueOf(bd.getQuantity())));
+            pstm.setString(5, AESCipher.getInstance().encrypt(String.valueOf(bd.getTotalValue())));
+            pstm.setString(6, AESCipher.getInstance().encrypt(String.valueOf(bd.getPercent())));
             rowAffected = pstm.executeUpdate();
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(BillDetail_DAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return rowAffected > 0 ? true:false;
@@ -59,9 +60,9 @@ public class BillDetail_DAO {
     public ArrayList<statisticalObject> countSoldProductByDay(String date)
         {
             ArrayList<statisticalObject> soL = new ArrayList<>();
-            String sql="SELECT product_id,Size, SUM(Quantity) AS amount FROM bill_detail,bill \n" +
+            String sql="SELECT product_id,Size, SUM(AES_DECRYPT(FROM_BASE64(Quantity),'"+AESCipher.getInstance().getKey()+"')) AS amount FROM bill_detail,bill \n" +
                             "WHERE Bill.Bill_ID=bill_detail.Bill_id "
-                        +   "AND DATE(Date) = '"+date+"'\n" +
+                        +   "AND DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) = '"+date+"'\n" +
                             "GROUP BY Product_id,Size";
             try(Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){ 
                 while(rs.next()){
@@ -71,15 +72,15 @@ public class BillDetail_DAO {
                     so.setValue(rs.getInt("amount"));
                     soL.add(so);
                 }
-            }catch(SQLException e){Logger.getLogger(connectDB.class.getName()).log(Level.SEVERE, null, e);}
+            }catch(Exception e){Logger.getLogger(connectDB.class.getName()).log(Level.SEVERE, null, e);}
             return soL;
         }
         public ArrayList<statisticalObject> countSoldProductByDay(String sdate,String eDate)
         {
             ArrayList<statisticalObject> soL = new ArrayList<>();
-            String sql="SELECT product_id,Size, SUM(Quantity) AS amount FROM bill_detail,bill \n" +
+            String sql="SELECT product_id,Size, SUM(AES_DECRYPT(FROM_BASE64(Quantity),'"+AESCipher.getInstance().getKey()+"')) AS amount FROM bill_detail,bill \n" +
                             "WHERE Bill.Bill_ID=bill_detail.Bill_id "
-                        +   "AND DATE(Date) BETWEEN '"+sdate+"' AND '"+eDate+"' \n" +
+                        +   "AND DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) BETWEEN '"+sdate+"' AND '"+eDate+"' \n" +
                             "GROUP BY Product_id,Size";
             try(Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){ 
                 while(rs.next()){
@@ -89,14 +90,14 @@ public class BillDetail_DAO {
                     so.setValue(rs.getInt("amount"));
                     soL.add(so);
                 }
-            }catch(SQLException e){Logger.getLogger(connectDB.class.getName()).log(Level.SEVERE, null, e);}
+            }catch(Exception e){Logger.getLogger(connectDB.class.getName()).log(Level.SEVERE, null, e);}
             return soL;
         }
     public int totalSoldProductByDay(String Date){
         int n=0;
-        String sql="SELECT product_id,Size, SUM(Quantity) AS amount FROM bill_detail,bill \n" +
+        String sql="SELECT product_id,Size, SUM(AES_DECRYPT(FROM_BASE64(Quantity),'"+AESCipher.getInstance().getKey()+"')) AS amount FROM bill_detail,bill \n" +
                             "WHERE Bill.Bill_ID=bill_detail.Bill_id "
-                        +   "AND DATE(Date) = '"+Date+"'";
+                        +   "AND DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) = '"+Date+"'";
         try(Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
             if(rs.next()) n = rs.getInt("amount");
         }catch(SQLException e){Logger.getLogger(connectDB.class.getName()).log(Level.SEVERE, null, e);}
@@ -104,10 +105,10 @@ public class BillDetail_DAO {
     }
     public ArrayList<statisticalObject> CountSoldProductByMonth(String month,String year){
         ArrayList<statisticalObject> soL = new ArrayList<>();
-        String sql="SELECT Product_id,Size, SUM(Quantity) AS amount FROM bill_detail,bill \n" +
+        String sql="SELECT Product_id,Size, SUM(AES_DECRYPT(FROM_BASE64(Quantity),'"+AESCipher.getInstance().getKey()+"')) AS amount FROM bill_detail,bill \n" +
                     "WHERE bill.Bill_ID = bill_detail.Bill_id\n" +
-                    "AND MONTH(bill.Date) = '"+month+"' \n" +
-                    "AND YEAR(bill.Date) = '"+year+"' \n" +
+                    "AND MONTH(AES_DECRYPT(FROM_BASE64(Bill.Date),'"+AESCipher.getInstance().getKey()+"')) = '"+month+"' \n" +
+                    "AND YEAR(AES_DECRYPT(FROM_BASE64(Bill.Date),'"+AESCipher.getInstance().getKey()+"')) = '"+year+"' \n" +
                     "GROUP BY Product_id,Size";
         try(Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
             while(rs.next()){
