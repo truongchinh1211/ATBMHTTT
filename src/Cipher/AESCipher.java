@@ -63,4 +63,7 @@ public class AESCipher {
         byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedData));
         return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
+    public String getKey(){
+        return new String(key.getEncoded(),StandardCharsets.UTF_8);
+    }
 }

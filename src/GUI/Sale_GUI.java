@@ -771,7 +771,11 @@ public class Sale_GUI extends javax.swing.JPanel implements checkPermission{
                     bd.setPercent(percent);
                     int newQuantity = list_Detail_Bill.get(i).getQuantity() - list_Quantity_Choice.get(i);
                     bd_BUS.insert(bd);
-                    product_BUS.updateProductQuantity(list_Detail_Bill.get(i), newQuantity);
+                    try {
+                        product_BUS.updateProductQuantity(list_Detail_Bill.get(i), newQuantity);
+                    } catch (Exception ex) {
+                        Logger.getLogger(Sale_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 } 
                 try {
                     Export_Excel(b.getBill_ID());

@@ -14,6 +14,6 @@ import java.nio.charset.Charset;
 public class test {
     public static void main(String[] args) throws Exception {
         
-        System.out.println(AESCipher.getInstance("").decrypt("CRCwe/XAOiDctGKIi9Wx2A=="));
+        System.out.println(AESCipher.getInstance("").decrypt("O7pn1RXN1x0vW4yb0lxTth3uuIclL0ij4TciYtgLuGQ="));
     }
 }

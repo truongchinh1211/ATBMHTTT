@@ -587,7 +587,7 @@ public class Recieved_GUI extends javax.swing.JPanel implements checkPermission 
                     break;
                 } else {
                     Product_DTO product = productBUS.readById(rp.getProductID(), rp.getSize());
-                    int quantity = product.getQuantity()+1;
+                    int quantity = product.getQuantity()+quantityList.get(counter);
                     try {
                         productBUS.updateProductQuantity(product, quantity);
                     } catch (Exception ex) {

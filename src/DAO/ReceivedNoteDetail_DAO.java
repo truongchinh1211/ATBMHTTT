@@ -4,6 +4,7 @@
  */
 package DAO;
 
+import Cipher.AESCipher;
 import DTO.ReceivedNote;
 import DTO.ReceivedNoteDetail;
 import DTO.statisticalObject;
@@ -33,21 +34,21 @@ public class ReceivedNoteDetail_DAO {
                 ReceivedNoteDetail rnd = new ReceivedNoteDetail();
                 rnd.setProductId(rs.getString("Product_ID"));
                 rnd.setSize(rs.getString("Size"));
-                rnd.setQuantity(rs.getInt("Quantity"));
-                rnd.setUnitPrice(rs.getInt("UnitPrice"));
-                rnd.setPrice(rs.getInt("Price"));
+                rnd.setQuantity(Integer.parseInt(AESCipher.getInstance().decrypt(rs.getString("Quantity"))));
+                rnd.setUnitPrice(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("UnitPrice"))));
+                rnd.setPrice(Double.parseDouble(AESCipher.getInstance().decrypt(rs.getString("Price"))));
                 rndList.add(rnd);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             Logger.getLogger(connectDB.class.getName()).log(Level.SEVERE, null, e);
         }
         return rndList;
     }
 
     public ArrayList<statisticalObject> countReceivedProductByDay(String date) {
-        String sql = "SELECT product_id,Size, SUM(Quantity) AS amount FROM received_note_detail,received_note \n"
+        String sql = "SELECT product_id,Size, SUM(AES_DECRYPT(FROM_BASE64(Quantity),'"+AESCipher.getInstance().getKey()+"')) AS amount FROM received_note_detail,received_note \n"
                 + "WHERE received_note.Received_Note_ID=received_note_detail.Received_Note_ID "
-                + "AND DATE(Date) = '" + date + "'\n"
+                + "AND DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) = '" + date + "'\n"
                 + "GROUP BY Product_id,Size";
         ArrayList<statisticalObject> soL = new ArrayList<>();
         try (Connection conn = cB.getConnect(); Statement stm = conn.createStatement(); ResultSet rs = stm.executeQuery(sql);) {
@@ -64,9 +65,9 @@ public class ReceivedNoteDetail_DAO {
         return soL;
     }
         public ArrayList<statisticalObject> countReceivedProductByDay(String sdate,String edate) {
-        String sql = "SELECT product_id,Size, SUM(Quantity) AS amount FROM received_note_detail,received_note \n"
+        String sql = "SELECT product_id,Size, SUM(AES_DECRYPT(FROM_BASE64(Quantity),'"+AESCipher.getInstance().getKey()+"')) AS amount FROM received_note_detail,received_note \n"
                 + "WHERE received_note.Received_Note_ID=received_note_detail.Received_Note_ID "
-                + "AND DATE(Date) BETWEEN '" + sdate + "' AND '"+edate+"' \n"
+                + "AND DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) BETWEEN '" + sdate + "' AND '"+edate+"' \n"
                 + "GROUP BY Product_id,Size";
         ArrayList<statisticalObject> soL = new ArrayList<>();
         try (Connection conn = cB.getConnect(); Statement stm = conn.createStatement(); ResultSet rs = stm.executeQuery(sql);) {
@@ -84,9 +85,9 @@ public class ReceivedNoteDetail_DAO {
     }
     public int totalReceivedProductByDay(String Date) {
         int n = 0;
-        String sql = "SELECT SUM(Quantity) AS amount FROM received_note_detail,received_note\n"
+        String sql = "SELECT SUM(AES_DECRYPT(FROM_BASE64(Quantity),'"+AESCipher.getInstance().getKey()+"')) AS amount FROM received_note_detail,received_note\n"
                 + "WHERE received_note.Received_Note_ID=received_note_detail.Received_Note_ID \n"
-                + "AND DATE(Date) = '" + Date + "'";
+                + "AND DATE(AES_DECRYPT(FROM_BASE64(Date),'"+AESCipher.getInstance().getKey()+"')) = '" + Date + "'";
         try (Connection conn = cB.getConnect(); Statement stm = conn.createStatement(); ResultSet rs = stm.executeQuery(sql);) {
             if (rs.next()) {
                 n = rs.getInt("amount");
@@ -101,7 +102,10 @@ public class ReceivedNoteDetail_DAO {
     public boolean insert(ReceivedNoteDetail rnd) {
         try {
             String sql = "INSERT INTO received_note_detail(Received_Note_ID,Product_ID,Size,UnitPrice,Quantity,Price)"
-                    + " VALUES('" + rnd.getReceivedNoteID() + "','" + rnd.getProductId() + "','" + rnd.getSize() + "'," + rnd.getUnitPrice() + "," + rnd.getQuantity() + "," + rnd.getPrice() + ")";
+                    + " VALUES('" + rnd.getReceivedNoteID() + "','" + rnd.getProductId() + "','" + rnd.getSize() + "','" 
+                    + AESCipher.getInstance().encrypt(String.valueOf(rnd.getUnitPrice()))  + "','" 
+                    + AESCipher.getInstance().encrypt(String.valueOf(rnd.getQuantity())) + "','" 
+                    + AESCipher.getInstance().encrypt(String.valueOf(rnd.getPrice())) + "')";
             try {
                 Connection conn = cB.getConnect();
                 PreparedStatement pst = conn.prepareStatement(sql);
@@ -117,10 +121,10 @@ public class ReceivedNoteDetail_DAO {
     }
     public ArrayList<statisticalObject> CountReceivedProductByMonth(String month,String year){
         ArrayList<statisticalObject> soL = new ArrayList<>();
-        String sql="SELECT Product_id,Size, SUM(Quantity) AS amount FROM received_note,received_note_detail\n" +
+        String sql="SELECT Product_id,Size, SUM(AES_DECRYPT(FROM_BASE64(Quantity),'"+AESCipher.getInstance().getKey()+"')) AS amount FROM received_note,received_note_detail\n" +
                     "WHERE received_note.Received_Note_ID = received_note_detail.Received_Note_ID\n" +
-                    "AND MONTH(received_note.Date) = '"+month+"' \n" +
-                    "AND YEAR(received_note.Date) = '"+year+"' \n" +
+                    "AND MONTH(AES_DECRYPT(FROM_BASE64(received_note.Date),'"+AESCipher.getInstance().getKey()+"')) = '"+month+"' \n" +
+                    "AND YEAR(AES_DECRYPT(FROM_BASE64(received_note.Date),'"+AESCipher.getInstance().getKey()+"')) = '"+year+"' \n" +
                     "GROUP BY Product_id,Size";
         try(Connection conn = cB.getConnect();Statement stm= conn.createStatement();ResultSet rs = stm.executeQuery(sql); ){
             while(rs.next()){

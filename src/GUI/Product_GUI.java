@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Image;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -662,6 +664,8 @@ public class Product_GUI extends javax.swing.JPanel implements checkPermission{
                     }
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(pnlAddSize, "Giá sản phẩm phải là số nguyên");
+                } catch (Exception ex) {
+                    Logger.getLogger(Product_GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         } else {
@@ -683,8 +687,10 @@ public class Product_GUI extends javax.swing.JPanel implements checkPermission{
                 JOptionPane.showMessageDialog(this, "Không được để trống thông tin sản phẩm!");
             } else if (productBUS.productNameExisted(newID, txtProductName1.getText())) {
                 JOptionPane.showMessageDialog(this, "Tên sản phẩm đã tồn tại!");
-            } else {
-                chosenImg = "src\\Img\\beef_beefsteak.jpg".replace("\\", "/");
+            } else if(chosenImg.isBlank()){
+                JOptionPane.showMessageDialog(this, "Chọn hình ảnh!");
+            }else{
+                chosenImg = chosenImg.replace("\\", "/");
                 Product_DTO product = new Product_DTO(newID, txtSizeID1.getText(), txtProductName1.getText(), categoryBus.readByName(cbbCategoryID1.getSelectedItem().toString()).getCategory_Id() + "", Integer.parseInt(txtPrice1.getText()), Integer.parseInt(txtQuantity1.getText()), chosenImg, false, true);
                 if (productBUS.insertProduct(product)) {
                     JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công");
@@ -696,6 +702,8 @@ public class Product_GUI extends javax.swing.JPanel implements checkPermission{
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Giá sản phẩm và số lượng sản phẩm phải là số nguyên");
+        } catch (Exception ex) {
+            Logger.getLogger(Product_GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnAddActionPerformed
 
@@ -710,18 +718,25 @@ public class Product_GUI extends javax.swing.JPanel implements checkPermission{
         } else {
             int i = tblProductList1.getSelectedRow();
             Product_DTO selectedProduct = listProduct.get(i);
-            if(chosenImg!=null)
+            if(!chosenImg.isBlank())
             chosenImg = chosenImg.replace("\\", "/");
             else
                 chosenImg = selectedProduct.getImage();
-            Product_DTO product = new Product_DTO(selectedProduct.getProductID(), txtSizeID1.getText(), txtProductName1.getText(), categoryBus.readByName(cbbCategoryID1.getSelectedItem().toString()).getCategory_Id() + "", Double.parseDouble(txtPrice1.getText()), Integer.parseInt(txtQuantity1.getText()), chosenImg, false, selectedBusinessStatus());
-            if (productBUS.updateProduct(product,selectedProduct.getSize())) {
-                productBUS.update_Status_Of_All_Product(product);
-                JOptionPane.showMessageDialog(this, "Cập nhật thông tin sản phẩm thành công!");
-                listProduct = productBUS.loadDataProduct();
-                loadProductList(listProduct);
-                refresh();
-                chosenImg = "";
+            try {
+                Product_DTO product = new Product_DTO(selectedProduct.getProductID(), txtSizeID1.getText(), txtProductName1.getText(), categoryBus.readByName(cbbCategoryID1.getSelectedItem().toString()).getCategory_Id() + "", Double.parseDouble(txtPrice1.getText()), Integer.parseInt(txtQuantity1.getText()), chosenImg, false, selectedBusinessStatus());
+                if (productBUS.updateProduct(product,selectedProduct.getSize())) {
+                    productBUS.update_Status_Of_All_Product(product);
+                    JOptionPane.showMessageDialog(this, "Cập nhật thông tin sản phẩm thành công!");
+                    listProduct = productBUS.loadDataProduct();
+                    loadProductList(listProduct);
+                    refresh();
+                    chosenImg = "";
+                }
+            }catch (NumberFormatException e){
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đúng định dạng");
+            }
+            catch (Exception ex) {
+                Logger.getLogger(Product_GUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_btnUpdateMouseClicked

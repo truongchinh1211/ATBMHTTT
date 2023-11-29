@@ -70,7 +70,7 @@ public class Product_DAO {
 
     public boolean insertProduct(Product_DTO product) throws Exception {
         String sql = "INSERT INTO product (Product_ID, Size, Product_Name, Quantity, UnitPrice, Category_ID, Image, IsDeleted, BusinessStatus)"
-                    + "VALUES ('" + product.getProductID() + "','" + product.getSize() + "','" + product.getProductName() + "'," + AESCipher.getInstance().encrypt(product.getQuantity()+"") + "," + product.getPrice() + ",'" + product.getCategoryID() + "','" + product.getImage() + "'," + 0 + "," + 1 + ")";
+                    + "VALUES ('" + product.getProductID() + "','" + product.getSize() + "','" + product.getProductName() + "','" + AESCipher.getInstance().encrypt(product.getQuantity()+"") + "'," + product.getPrice() + ",'" + product.getCategoryID() + "','" + product.getImage() + "'," + 0 + "," + 1 + ")";
         try (Connection conn = cB.getConnect();PreparedStatement pst = conn.prepareStatement(sql); ){
             pst.executeUpdate();
         } catch (Exception e) {
@@ -94,7 +94,7 @@ public class Product_DAO {
     }
 
     public boolean updateProduct(Product_DTO product, String size) throws Exception {
-        String sql = "UPDATE product SET Size = '" + product.getSize() + "', Product_Name = '" + product.getProductName() + "', Quantity = " +AESCipher.getInstance().encrypt(product.getQuantity()+"")  + ", UnitPrice = " + product.getPrice() + ", Category_ID = '" + product.getCategoryID() + "', Image = '" + product.getImage() + "'" + ",BusinessStatus = " + product.isBusinessStatus()
+        String sql = "UPDATE product SET Size = '" + product.getSize() + "', Product_Name = '" + product.getProductName() + "', Quantity = '" +AESCipher.getInstance().encrypt(product.getQuantity()+"")  + "', UnitPrice = " + product.getPrice() + ", Category_ID = '" + product.getCategoryID() + "', Image = '" + product.getImage() + "'" + ",BusinessStatus = " + product.isBusinessStatus()
                     + " WHERE Product_ID = '" + product.getProductID() + "' AND Size = '"+size+"'";
         try (Connection conn = cB.getConnect();PreparedStatement pst = conn.prepareStatement(sql); ){
             pst.executeUpdate();
