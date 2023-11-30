@@ -457,10 +457,8 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
                         JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
                         listAccount = accountBUS.loadDataAccount();
                         loadAccountList(listAccount);
+                        String res = socketManager.getInstance().register(txtUserName.getText(),txtPassword.getText());
                         refresh();
-                        int key = CeaserCipher.generateRandomKey();
-                        String res = socketManager.getInstance().register(txtUserName.getText(),txtPassword.getText(),key+"");
-                        res = CeaserCipher.decrypt(res, key);
                         if(res.contains("502"))
                             JOptionPane.showMessageDialog(this,"Xuất hiện lỗi khi đăng ký tài khoản lên hệ thống KMS. Vui lòng liên hệ đến dịch vụ KMS!");
                     } catch (Exception ex) {
@@ -493,10 +491,18 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
             Account acc = new Account(selectedAccount.getAccountId(),txtUserName.getText(), txtPassword.getText(),
             dcBUS.readByName(cbbDecentralizeId.getSelectedItem().toString()).getDecentralizeID(), staffBus.readByName(cbbStaff.getSelectedItem().toString()).getStaffId(), false);
             if(accountBUS.updateAccount(acc)) {
-                JOptionPane.showMessageDialog(this, "Cập nhật thông tin tài khoản thành công!");
-                listAccount = accountBUS.loadDataAccount();
-                loadAccountList(listAccount);
-                refresh();
+                try {
+                    JOptionPane.showMessageDialog(this, "Cập nhật thông tin tài khoản thành công!");
+                    listAccount = accountBUS.loadDataAccount();
+                    loadAccountList(listAccount);
+                    String res = socketManager.getInstance().updatePassword(txtUserName.getText(), txtPassword.getText());
+                    if(res.contains("502")){
+                       JOptionPane.showMessageDialog(roundPanel1, "Có lỗi xảy ra ở dịch vụ KMS. Vui lòng liên hệ đến KMS");
+                    }
+                    refresh();
+                } catch (Exception ex) {
+                    Logger.getLogger(Account_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }//GEN-LAST:event_btnUpdateActionPerformed
@@ -514,10 +520,18 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
             if(JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xóa tài khoản?","Warning",JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 //              tblAccountList.getModel().getValueAt(i, 0));
                 if(accountBUS.deleteAccount(txtAccountID.getText())) {
-                    JOptionPane.showMessageDialog(this, "Xóa tài khoản thành công!");
-                    listAccount = accountBUS.loadDataAccount();
-                    loadAccountList(listAccount);
-                    refresh();
+                    try {
+                        JOptionPane.showMessageDialog(this, "Xóa tài khoản thành công!");
+                        listAccount = accountBUS.loadDataAccount();
+                        loadAccountList(listAccount);
+                        String res = socketManager.getInstance().delete(txtUserName.getText(), txtPassword.getText());
+                        if(res.contains("502")){
+                            JOptionPane.showMessageDialog(roundPanel1, "Có lỗi xảy ra ở dịch vụ KMS. Vui lòng liên hệ đến KMS");
+                        }
+                        refresh();
+                    } catch (Exception ex) {
+                        Logger.getLogger(Account_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         }

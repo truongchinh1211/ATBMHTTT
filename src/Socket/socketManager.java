@@ -52,17 +52,39 @@ public class socketManager {
         }
         return instance;
     }
-    public String getKey(String username,String password,String key) throws Exception{
-        String access ="login "+ username + " "+password+" "+key;
+    public String getKey(String username,String password) throws Exception{
+        int key = CeaserCipher.generateRandomKey();
+        String access ="get "+ username + " "+password+" "+key;
         writeLineAndFlush(access, commandWriter);
         String serverKey = commandReader.readLine();
+        serverKey = CeaserCipher.decrypt(serverKey, key);
         disconnect();
         return serverKey;
     }
-    public String register(String username,String password,String key) throws Exception{
-        String access ="register " +username + " "+password+" "+key;
+    public String register(String username,String password) throws Exception{
+        int key = CeaserCipher.generateRandomKey();
+        String access ="put " +username + " "+password+" "+key;
         writeLineAndFlush(access, commandWriter);
         String serverKey = commandReader.readLine();
+        serverKey = CeaserCipher.decrypt(serverKey, key);
+        disconnect();
+        return serverKey;
+    }
+    public String updatePassword(String username,String newPassword) throws Exception{
+        int key = CeaserCipher.generateRandomKey();
+        String access ="post " +username + " "+newPassword+" "+key;
+        writeLineAndFlush(access, commandWriter);
+        String serverKey = commandReader.readLine();
+        serverKey = CeaserCipher.decrypt(serverKey, key);
+        disconnect();
+        return serverKey;
+    }
+    public String delete(String username,String password) throws Exception{
+        int key = CeaserCipher.generateRandomKey();
+        String access ="delete " +username + " "+password+" "+key;
+        writeLineAndFlush(access, commandWriter);
+        String serverKey = commandReader.readLine();
+        serverKey = CeaserCipher.decrypt(serverKey, key);
         disconnect();
         return serverKey;
     }
@@ -80,9 +102,8 @@ public class socketManager {
     }
     public static void main(String[] args) {
         try {
-            int key = CeaserCipher.generateRandomKey();
-            String res = socketManager.getInstance().register("2", "2", key+"");
-            System.out.println(CeaserCipher.decrypt(res, key));
+            String res = socketManager.getInstance().register("2", "2");
+            System.out.println(res);
         } catch (Exception ex) {
             Logger.getLogger(socketManager.class.getName()).log(Level.SEVERE, null, ex);
         }
