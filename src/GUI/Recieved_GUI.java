@@ -565,10 +565,14 @@ public class Recieved_GUI extends javax.swing.JPanel implements checkPermission 
         ReceivedNote rn = new ReceivedNote(receiveBUS.autoID(), LocalDateTime.now(), Double.parseDouble(lblTotalValue.getText()), Double.parseDouble(lblTaxValue.getText()), Double.parseDouble(lblFinalValue.getText()), lblSupplier.getText(), loggedInStaff);
         boolean receivedNoteInserted = false;
         String receivednoteID = receiveBUS.autoID();
-        if (receiveBUS.insert(rn)) {
-            receivedNoteInserted = true;
-        } else {
-            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi trong quá trình thêm!");
+        try {
+            if (receiveBUS.insert(rn)) {
+                receivedNoteInserted = true;
+            } else {
+                JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi trong quá trình thêm!");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Recieved_GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         for (int i = 0; i < tblReceiveDetail.getRowCount(); i++) {

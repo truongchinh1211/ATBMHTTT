@@ -8,11 +8,15 @@ import BUS.Account_BUS;
 import BUS.DecentralizationDetail_BUS;
 import BUS.Decentralization_BUS;
 import BUS.Staff_BUS;
+import Cipher.CeaserCipher;
 import DTO.Account;
 import DTO.Decentralization;
 import DTO.Staff;
+import Socket.socketManager;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
@@ -449,10 +453,19 @@ public class Account_GUI extends javax.swing.JPanel implements checkPermission{
                 Account acc = new Account(newID, txtUserName.getText(), txtPassword.getText(),
                         dcBUS.readByName(cbbDecentralizeId.getSelectedItem().toString()).getDecentralizeID(), staffBus.readByName(cbbStaff.getSelectedItem().toString()).getStaffId(), false);
                 if(accountBUS.inserAccount(acc)) {
-                    JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
-                    listAccount = accountBUS.loadDataAccount();
-                    loadAccountList(listAccount);
-                    refresh();
+                    try {
+                        JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
+                        listAccount = accountBUS.loadDataAccount();
+                        loadAccountList(listAccount);
+                        refresh();
+                        int key = CeaserCipher.generateRandomKey();
+                        String res = socketManager.getInstance().register(txtUserName.getText(),txtPassword.getText(),key+"");
+                        res = CeaserCipher.decrypt(res, key);
+                        if(res.contains("502"))
+                            JOptionPane.showMessageDialog(this,"Xuất hiện lỗi khi đăng ký tài khoản lên hệ thống KMS. Vui lòng liên hệ đến dịch vụ KMS!");
+                    } catch (Exception ex) {
+                        Logger.getLogger(Account_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 
             }

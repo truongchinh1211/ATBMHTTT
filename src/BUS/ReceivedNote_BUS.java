@@ -32,7 +32,7 @@ public class ReceivedNote_BUS {
         return rn_DAO.autoID();
     }
     
-    public boolean insert(ReceivedNote rn) {
+    public boolean insert(ReceivedNote rn) throws Exception {
         return rn_DAO.insert(rn);
     }
     public double[] SumPaidValuePerMonth(String year){

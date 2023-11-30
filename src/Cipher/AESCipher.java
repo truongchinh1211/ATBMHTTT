@@ -23,7 +23,7 @@ public class AESCipher {
             // Nếu key chưa được thiết lập từ KMS, thì thiết lập nó
             if (key == null && kmsKey != null) {
 //                key = new SecretKeySpec(Base64.getDecoder().decode(kmsKey), "AES");
-                    byte[] keyToBytes = "b2Z9965P97a7EC4B".getBytes(StandardCharsets.UTF_8);
+                    byte[] keyToBytes = kmsKey.getBytes(StandardCharsets.UTF_8);
                     key = new SecretKeySpec(keyToBytes,"AES");
             }
         } catch (Exception e) {

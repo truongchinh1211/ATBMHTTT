@@ -3,8 +3,10 @@ package GUI;
 
 import BUS.Login_BUS;
 import Cipher.AESCipher;
+import Cipher.CeaserCipher;
 import DTO.Account;
 import DTO.DecentralizationDetail;
+import Socket.socketManager;
 import java.awt.Color;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -293,9 +295,19 @@ public class Login_GUI extends javax.swing.JFrame {
                     dcdt = loginBUS.getDecentralizationDetail(staffInfo.get(3));
                 this.dispose();
                 try {
-                    AESCipher.getInstance("");
-                    new Home_GUI(staffInfo, dcdt);
+                    
+                    int key = CeaserCipher.generateRandomKey();
+                    String res = socketManager.getInstance().getKey(jTextField6.getText(),jPasswordField1.getText(),key+"");
+                    res = CeaserCipher.decrypt(res, key);
+                    if(!res.contains("502")){
+                        AESCipher.getInstance(res);
+                        new Home_GUI(staffInfo, dcdt);
+                    }
+                    else 
+                        JOptionPane.showMessageDialog(this,"Server bi loi, hay thu mot tai khoan khac");
                 } catch (ParseException ex) {
+                    Logger.getLogger(Login_GUI.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
                     Logger.getLogger(Login_GUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }

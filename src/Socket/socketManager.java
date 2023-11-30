@@ -34,10 +34,10 @@ public class socketManager {
     
     private socketManager() {
         try {
-//            IPConfig ipConfig = new IPConfig();
-//            String ipServer = ipConfig.getIPServer();
+            IPConfig ipConfig = new IPConfig();
+            String ipServer = ipConfig.getIPServer();
             // Khởi tạo kết nối TCP socket
-            commandSocket = new Socket("localhost", 1234);
+            commandSocket = new Socket(ipServer, 1234);
             // Khởi tạo BufferedReader và BufferedWriter để gửi và nhận dữ liệu
             commandReader = new BufferedReader(new InputStreamReader(commandSocket.getInputStream()));
             commandWriter = new BufferedWriter(new OutputStreamWriter(commandSocket.getOutputStream()));    
@@ -53,16 +53,18 @@ public class socketManager {
         return instance;
     }
     public String getKey(String username,String password,String key) throws Exception{
-        String access = username + " "+password+" "+key;
+        String access ="login "+ username + " "+password+" "+key;
         writeLineAndFlush(access, commandWriter);
         String serverKey = commandReader.readLine();
-        return key;
+        disconnect();
+        return serverKey;
     }
     public String register(String username,String password,String key) throws Exception{
         String access ="register " +username + " "+password+" "+key;
         writeLineAndFlush(access, commandWriter);
         String serverKey = commandReader.readLine();
-        return serverKey    ;
+        disconnect();
+        return serverKey;
     }
     public void disconnect() throws IOException{
         commandReader.close();
